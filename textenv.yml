@@ -1,0 +1,17 @@
+name: textenv
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - poppler
+  - tectonic
+  - jinja2
+  - pip
+  - pip:
+    - marker-pdf
+    - mistralai
+    - pdf2image
+    - pillow
+    - opencv-python
+    - python-dotenv
