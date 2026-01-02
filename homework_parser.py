@@ -16,151 +16,162 @@ class HomeworkParser:
     
     def __init__(self):
         # Regex Patterns
-        # Matches: "# Problem 1", "## Problem 1", or just "Problem 1" (robustness)
-        self.problem_pattern = re.compile(r'^(?:#|##)?\s*Problem\s+(\d+)', re.IGNORECASE)
-        
-        # Matches: "## a)" or "## b)" -- STRICTLY ## for Parts
-        self.part_pattern = re.compile(r'^##\s*([a-z]\))', re.IGNORECASE)
-        
-        # Matches: "### i)", "### ii)", etc. -- STRICTLY ### for Subparts
-        self.subpart_pattern = re.compile(r'^###\s*([ivx]+\))', re.IGNORECASE)
-        
-        # Proof Markers
-        self.proof_start = r'\begin{proof}'
-        self.proof_end = r'\end{proof}'
+        self.problem_pattern = re.compile(r'^#+\s*(?:Problem\s+)?([0-9]+|[A-Z])(?!\))', re.IGNORECASE)
+        self.part_pattern = re.compile(r'^#+\s*([a-z]|[0-9]+)\)', re.IGNORECASE)
+        self.subpart_pattern = re.compile(r'^#+\s*([ivx]+)\)', re.IGNORECASE)
+        self.tag_pattern = re.compile(r'^\{(bp_)?(\d+)\}(.*)', re.DOTALL)
         
         # Internal State
         self.problems = []
-        self.current_problem = None # Dict
-        self.current_part = None    # Dict
-        self.current_subpart = None # Dict
+        self.current_problem = None
+        self.current_part = None
+        self.current_subpart = None
         
     def parse(self, markdown_string):
-        """
-        Main entry point. Iterates line-by-line using a state machine.
-        """
         lines = markdown_string.split('\n')
-        
         for line in lines:
-            line = line.rstrip() 
             self._process_line(line)
-            
-        # Final cleanup after loop
         self._finalize_current_blocks()
         
     def to_json(self):
-        """
-        Exports the parsed structure to JSON.
-        """
-        output = {
-            "problems": self.problems
-        }
+        output = {"problems": self.problems}
         return json.dumps(output, indent=4)
         
     def _process_line(self, line):
         clean_line = line.strip()
-        
-        # 1. Check for New Problem Header
+        if not clean_line: return
+
+        # 1. Match Structural Elements
+        # Priority: Part/Subpart > Problem
+        part_match = self.part_pattern.match(clean_line)
+        if part_match:
+            if not self.current_problem:
+                # Part found before problem? Create a dummy problem if needed, or default to Preamble
+                # But usually parts belong to problems. 
+                # Let's ensure we have a current_problem
+                self.current_problem = {
+                    "problem_id": "Preamble",
+                    "content_entries": [],
+                    "parts": [],
+                    "_temp_lines": [] 
+                }
+                self.problems.append(self.current_problem)
+            
+            self._finalize_current_part_and_subparts()
+            self.current_part = {
+                "part_id": part_match.group(1).replace(')', ''),
+                "content_entries": [],
+                "subparts": [],
+                "_temp_lines": []
+            }
+            self.current_problem["parts"].append(self.current_part)
+            return
+
+        subpart_match = self.subpart_pattern.match(clean_line)
+        if subpart_match and self.current_part:
+            self._finalize_current_subpart()
+            self.current_subpart = {
+                "subpart_id": subpart_match.group(1).replace(')', ''),
+                "content_entries": [],
+                "_temp_lines": []
+            }
+            self.current_part["subparts"].append(self.current_subpart)
+            return
+
         problem_match = self.problem_pattern.match(clean_line)
         if problem_match:
-            self._finalize_current_blocks() # Close everything
-            
-            problem_id = problem_match.group(1)
+            self._finalize_current_blocks()
             self.current_problem = {
-                "problem_id": problem_id,
-                "content": "", # For "headless" problems (no parts)
+                "problem_id": problem_match.group(1),
+                "content_entries": [],
                 "parts": [],
                 "_temp_lines": [] 
             }
             self.problems.append(self.current_problem)
+            self.current_part = None
+            self.current_subpart = None
             return
 
-        # 2. Check for New Part Header
-        # Only valid if we have an active problem
-        part_match = self.part_pattern.match(clean_line)
-        if part_match and self.current_problem is not None:
-            self._finalize_problem_content() # Finish problem content
-            self._finalize_current_part_and_subparts() # Close existing part & subparts
+        # 2. Content Tags
+        tag_match = self.tag_pattern.match(clean_line)
+        if tag_match:
+            is_bullet = bool(tag_match.group(1))
+            level = int(tag_match.group(2))
+            text = tag_match.group(3).strip()
             
-            part_id = part_match.group(1).replace(')', '')
-            
-            self.current_part = {
-                "part_id": part_id,
-                "content": "",
-                "subparts": [],
-                "_temp_lines": [] # Buffer for content
+            entry = {
+                "type": "bullet" if is_bullet else "text",
+                "level": level,
+                "text": text
             }
-            self.current_problem["parts"].append(self.current_part)
-            return
             
-        # 3. Check for Subpart Header (### i))
-        if self.current_part is not None:
-             subpart_match = self.subpart_pattern.match(clean_line)
-             if subpart_match:
-                self._finalize_current_subpart() # Close existing subpart
-                
-                subpart_id = subpart_match.group(1).replace(')', '')
-                
-                self.current_subpart = {
-                    "subpart_id": subpart_id,
-                    "content": "",
-                    "_temp_lines": []
-                }
-                self.current_part["subparts"].append(self.current_subpart)
-                return
+            # Add to active block
+            target = None
+            if self.current_subpart: target = self.current_subpart
+            elif self.current_part: target = self.current_part
+            elif self.current_problem: target = self.current_problem
+            else:
+                # Headless content (before first problem)
+                if not self.problems or "problem_id" in self.problems[0]:
+                    self.current_problem = {
+                        "problem_id": "Preamble",
+                        "content_entries": [],
+                        "parts": [],
+                        "_temp_lines": []
+                    }
+                    self.problems.insert(0, self.current_problem)
+                target = self.problems[0]
+            
+            target["content_entries"].append(entry)
+            return # Added return to prevent falling through to fallback
 
-        # 4. Handle Content Logic
-        # Priority: Subpart > Part > Problem
-        if self.current_subpart is not None:
-            self.current_subpart["_temp_lines"].append(line)
-        elif self.current_part is not None:
-            self.current_part["_temp_lines"].append(line)
-        elif self.current_problem is not None:
-            self.current_problem["_temp_lines"].append(line)
-            
+        # 3. Fallback for untagged lines (Assume level 0 text)
+        entry = {
+            "type": "text",
+            "level": 0,
+            "text": clean_line
+        }
+        target = None
+        if self.current_subpart: target = self.current_subpart
+        elif self.current_part: target = self.current_part
+        elif self.current_problem: target = self.current_problem
+        else:
+            if not self.problems:
+                self.current_problem = {"problem_id": "Preamble", "content_entries": [], "parts": [], "_temp_lines": []}
+                self.problems.append(self.current_problem)
+            target = self.problems[0]
+        
+        target["content_entries"].append(entry)
+
+
     def _finalize_current_blocks(self):
-        self._finalize_problem_content()
         self._finalize_current_part_and_subparts()
+        self._finalize_current_problem()
         self.current_problem = None
         
     def _finalize_current_part_and_subparts(self):
-        self._finalize_current_subpart() # Close subpart first
-        self._finalize_current_part()    # Then close part
+        self._finalize_current_subpart()
+        self._finalize_current_part()
         
     def _finalize_current_subpart(self):
         if self.current_subpart:
-            content_lines = self.current_subpart["_temp_lines"]
-            self.current_subpart["content"] = self._clean_content("\n".join(content_lines))
-            del self.current_subpart["_temp_lines"]
+            if "_temp_lines" in self.current_subpart: del self.current_subpart["_temp_lines"]
+            # Compatibility: add joined content
+            self.current_subpart["content"] = "\n".join([e["text"] for e in self.current_subpart["content_entries"]])
             self.current_subpart = None
 
     def _finalize_current_part(self):
         if self.current_part:
-            content_lines = self.current_part["_temp_lines"]
-            self.current_part["content"] = self._clean_content("\n".join(content_lines))
-            del self.current_part["_temp_lines"]
+            if "_temp_lines" in self.current_part: del self.current_part["_temp_lines"]
+            self.current_part["content"] = "\n".join([e["text"] for e in self.current_part["content_entries"]])
             self.current_part = None
 
-    def _finalize_problem_content(self):
+    def _finalize_current_problem(self):
         if self.current_problem:
-            # Only process if we haven't already moved past problem content?
-            # Actually, _temp_lines stays with problem until finalized?
-            # But wait, once we are in a part, we shouldn't add to problem content.
-            # My logic in _process_line: 'elif self.current_problem'. So once part is active, problem content stops.
-            # So we can finalize problem content whenever we switch/close problem, 
-            # OR we can just finalize it at the end. Use a check to avoid double processing.
-            if "_temp_lines" in self.current_problem:
-                 content_lines = self.current_problem["_temp_lines"]
-                 # Append to existing content or set? usually sequential.
-                 if content_lines:
-                     new_content = self._clean_content("\n".join(content_lines))
-                     if self.current_problem["content"]:
-                         self.current_problem["content"] += "\n" + new_content
-                     else:
-                         self.current_problem["content"] = new_content
-                     
-                     # Clear lines so we don't re-add
-                     self.current_problem["_temp_lines"] = []
-            
-    def _clean_content(self, text):
+            if "_temp_lines" in self.current_problem: del self.current_problem["_temp_lines"]
+            self.current_problem["content"] = "\n".join([e["text"] for e in self.current_problem["content_entries"]])
+
+    @staticmethod
+    def _clean_content(text):
         return text.strip()
+

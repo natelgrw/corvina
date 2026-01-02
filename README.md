@@ -2,7 +2,7 @@
 
 A Python pipeline converting handwritten notes in PDF format into valid, formatted LaTeX documents. Currently suitable for math homework transcriptions of one page.
 
-Current Version: **0.1.1**
+Current Version: **0.2.0**
 
 ## 💬 Features
 

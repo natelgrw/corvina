@@ -16,6 +16,8 @@ class LaTeXGenerator:
 
 % Custom Commands
 \newcommand{\N}{\mathbb{N}}
+\newcommand{\g}{>}
+\renewcommand{\l}{<}
 
 % Metadata
 \title{Math Homework}
@@ -26,21 +28,16 @@ class LaTeXGenerator:
 \maketitle
 
 ((% for problem in problems %))
+((% if problem.problem_id != "Preamble" %))
 \section*{Problem ((( problem.problem_id )))}
-
-((% if problem.content %))
-((( problem.content )))
 ((% endif %))
+
+((( problem.content )))
 
 ((% for part in problem.parts %))
 \subsection*{((( part.part_id ))))}
 
 ((( part.content )))
-
-((% for subpart in part.subparts %))
-\subsubsection*{((( subpart.subpart_id ))))}
-((( subpart.content )))
-((% endfor %))
 
 ((% endfor %))
 ((% endfor %))
@@ -124,20 +121,15 @@ class LaTeXGenerator:
             return
 
         for problem in data["problems"]:
-             # Process Problem Content
-             if "content" in problem and problem["content"]:
+             if "content" in problem:
                  problem["content"] = self._transform_bullets_to_latex(problem["content"])
-                 
              if "parts" in problem:
                  for part in problem["parts"]:
-                     # Process Part Content
-                     if "content" in part and part["content"]:
+                     if "content" in part:
                          part["content"] = self._transform_bullets_to_latex(part["content"])
-                     
-                     # Process Subparts
                      if "subparts" in part:
                          for subpart in part["subparts"]:
-                             if "content" in subpart and subpart["content"]:
+                             if "content" in subpart:
                                  subpart["content"] = self._transform_bullets_to_latex(subpart["content"])
 
     def _transform_bullets_to_latex(self, text):
