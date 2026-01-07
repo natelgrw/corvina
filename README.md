@@ -1,36 +1,62 @@
-# TEX Transformer: Automated LaTeX Transcription
+# TeX Transformer: Data Pipeline for LaTeX Model Training
 
-A Python pipeline converting handwritten notes in PDF format into valid, formatted LaTeX documents. Currently suitable for math homework transcriptions of one page.
+A document processing pipeline that extracts PDF pages, classifies them using Mistral AI's Pixtral VLM, and generates structured JSON output.
 
-Current Version: **0.2.0**
+Current Version: **0.3.0**
 
 ## 💬 Features
 
-This pipeline combines `marker-pdf` for layout analysis with Mistral's VLM for superior handwriting recognition. A modular Python architecture orchestrates the process, featuring robust post-processing to ensure valid LaTeX syntax (e.g., `\mathbb{N}`), strict list formatting, and accurate math delimiters.
+TeX Transformer is under active development. It currently supports the following features:
 
-## 🔎 Installation
+```
+PDF Input
+   ↓
+Extract Pages (pdf2image + preprocessing)
+   ↓
+Classify Document (Pixtral VLM)
+   ↓
+Save JSON Output + Images
+```
 
-1.  **Clone the repository**.
-    ```bash
-    git clone https://github.com/nathanleung/tex_transformer.git
-    cd tex_transformer
-    ```
+Each document is first sorted into 1 of 6 document types:
 
-2.  **Create the environment**:
-    ```bash
-    conda env create -f textenv.yml
-    conda activate textenv
-    ```
+- `homework`: Problems, exercises, assignments
+- `notes`: Lecture notes, study summaries
+- `assessment`: Exams, tests, quizzes
+- `report`: Formal reports with structured sections
+- `writing`: Essays, compositions
+- `diagram`: Visual content (charts, graphs)
 
-3.  **Setup Configuration**:
-    Create a `.env` file in the root directory:
-    ```bash
-    MISTRAL_API_KEY=your_actual_api_key_here
-    ```
+Then sorted into 1 of 4 academic domains:
 
-4. **Standard Run**:
-    Run the pipeline on your target PDF. The script handles OCR, Parsing, and Generation automatically.
-    ```bash
-    python main.py data/sample_1.pdf
-    ```
-    Output will be saved to `results/sample_1.pdf`.
+- `math_phys_cs`: Mathematics, Physics, Computer Science
+- `bio_chem_env`: Biology, Chemistry, Environmental Science
+- `econ_business`: Economics, Business
+- `humanities`: Languages, History, Social Sciences
+
+## Docker Setup
+
+1. Set up your API key
+
+Create a `.env` file:
+```bash
+echo "MISTRAL_API_KEY=your_mistral_api_key" > .env
+```
+
+Or get your API key at: https://console.mistral.ai/
+
+2. Build Docker image
+
+```bash
+docker build -t tex_transformer .
+```
+
+3. Run the pipeline
+
+```bash
+docker run --rm \
+  -v $(pwd)/input_data:/app/input_data \
+  -v $(pwd)/dataset:/app/dataset \
+  tex_transformer \
+  python main.py input_data/sample_1.pdf --dpi 200
+```

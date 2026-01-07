@@ -1,0 +1,15 @@
+{
+  "document_id": "sample_1",
+  "pdf_file": "sample_1.pdf",
+  "num_pages": 1,
+  "classification": {
+    "type": "homework",
+    "domain": "math_phys_cs"
+  },
+  "pages": [
+    {
+      "page_number": 1,
+      "image_file": "images/page1.png"
+    }
+  ]
+}
