@@ -1,11 +1,19 @@
-Version: **0.3.0**
+Version **0.4.0**
+
+Date Released: **01/19/2026**
+
+- Web interface with sleek, modern UI for uploading and annotating documents with bounding boxes
+- Backend integration for efficient processing and storage of document submissions
+- Integration with Mistral VLM for automated image extraction and document classification
+
+Version **0.3.0**
 
 Date Released: **01/07/2026**
 
 - Initial pipeline release with PDF `.png` extraction, processing, and document classification
 - Docker environment setup
 
-Version: **0.2.0**
+Version **0.2.0**
 
 Date Released: **01/02/2026**
 
@@ -13,7 +21,7 @@ Date Released: **01/02/2026**
 - Reformatted `.md`, `.json`, and `.tex` output
 - Reworked transcription pipelines for better accuracy
 
-Version: **0.1.1**
+Version **0.1.1**
 
 Date Released: **01/01/2026**
 
@@ -21,7 +29,7 @@ Date Released: **01/01/2026**
 - Added support for simple math homework transcriptions of multiple pages
 - Refined JSON parsing for handling bullet points and subparts
 
-Version: **0.1.0**
+Version **0.1.0**
 
 Date Released: **12/24/2025**
 

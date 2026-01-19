@@ -1,0 +1,215 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+
+:root {
+  --font-mono: 'IBM Plex Mono', monospace;
+  --color-bg: #fdfdfd;
+  --color-text: #1a1a1a;
+  --color-accent: #000;
+  --color-border: #e0e0e0;
+  --color-tech-grid: rgba(0, 0, 0, 0.03);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-mono);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Minimal "techy" scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #000;
+}
+
+/* Utilities */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  width: 100%;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tech-border {
+  border: 1px solid var(--color-border);
+  position: relative;
+}
+
+.tech-border::before,
+.tech-border::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--color-text);
+  transition: all 0.2s ease;
+}
+
+.tech-border::before {
+  top: -2px;
+  left: -2px;
+}
+
+.tech-border::after {
+  bottom: -2px;
+  right: -2px;
+}
+
+button {
+  font-family: var(--font-mono);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+button:hover {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tech-button.active {
+  background: var(--color-text);
+  color: var(--color-bg);
+  border-color: var(--color-text);
+}
+
+/* Custom Tech Dropdown */
+.tech-dropdown-trigger {
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  padding-right: 2rem;
+  /* Custom Chevron */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 1em;
+}
+
+.tech-dropdown-trigger:hover {
+  border-color: #000;
+}
+
+.tech-dropdown-trigger.open {
+  border-color: #000;
+  background-color: #f9f9f9;
+}
+
+.tech-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  border: 1px solid #000;
+  background: #fff;
+  z-index: 100;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tech-dropdown-item {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f5f5f5;
+  transition: background 0.1s;
+}
+
+.tech-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.tech-dropdown-item:hover {
+  background: #f9f9f9;
+}
+
+.tech-dropdown-item.selected {
+  background: #444;
+  color: #fff;
+}
+
+.delete-annotation-btn {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  font-size: 14px;
+  line-height: 1;
+  transition: all 0.1s;
+  aspect-ratio: 1 / 1;
+}
+
+.delete-annotation-btn:hover {
+  background: #000;
+  color: #fff;
+}
+
+.close-btn {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #000;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: #000;
+  color: #fff;
+}

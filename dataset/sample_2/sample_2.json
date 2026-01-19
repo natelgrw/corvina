@@ -9,11 +9,202 @@
   "pages": [
     {
       "page_number": 1,
-      "image_file": "images/page1.png"
+      "image_file": "images/page1.png",
+      "bounding_boxes": [
+        {
+          "id": "57d61e3c-6027-4c8e-9920-d9dce26905b4",
+          "order": 1,
+          "bbox": [
+            97,
+            87,
+            167,
+            109
+          ],
+          "type": "heading"
+        },
+        {
+          "id": "8fce6cfe-9412-4585-a141-df94f7de63aa",
+          "order": 2,
+          "bbox": [
+            97,
+            110,
+            143,
+            130
+          ],
+          "type": "paragraph"
+        },
+        {
+          "id": "c4a16d13-50d7-4f7b-9350-cd1c39a267ac",
+          "order": 3,
+          "bbox": [
+            99,
+            132,
+            524,
+            214
+          ],
+          "type": "list"
+        },
+        {
+          "id": "b9fc08f6-5ffa-4d53-89cf-3886607298d3",
+          "order": 4,
+          "bbox": [
+            100,
+            238,
+            171,
+            257
+          ],
+          "type": "heading"
+        },
+        {
+          "id": "53b0def3-6b7c-4e49-8f2b-0c9ae13b49d2",
+          "order": 5,
+          "bbox": [
+            104,
+            260,
+            122,
+            276
+          ],
+          "type": "heading"
+        },
+        {
+          "id": "3050e516-4d42-4518-a747-ee3d9fe9f222",
+          "order": 6,
+          "bbox": [
+            133,
+            261,
+            234,
+            278
+          ],
+          "type": "display_math"
+        },
+        {
+          "id": "2dae3e5f-16b6-4b24-acda-ac5e1088fe68",
+          "order": 7,
+          "bbox": [
+            103,
+            281,
+            122,
+            298
+          ],
+          "type": "heading"
+        },
+        {
+          "id": "f2bce36a-6f88-4388-b798-4a9d6fa1d239",
+          "order": 8,
+          "bbox": [
+            135,
+            281,
+            264,
+            300
+          ],
+          "type": "display_math"
+        }
+      ]
     },
     {
       "page_number": 2,
-      "image_file": "images/page2.png"
+      "image_file": "images/page2.png",
+      "bounding_boxes": [
+        {
+          "id": "ad35b9bf-5906-4de3-9e13-accd3ade02be",
+          "order": 1,
+          "bbox": [
+            63,
+            70,
+            139,
+            94
+          ],
+          "type": "heading"
+        },
+        {
+          "id": "863f993a-8851-4a78-878e-951b90bf369d",
+          "order": 2,
+          "bbox": [
+            68,
+            95,
+            87,
+            114
+          ],
+          "type": "heading"
+        },
+        {
+          "id": "5a96508d-908f-42c3-ac60-5f2309fa9240",
+          "order": 3,
+          "bbox": [
+            109,
+            98,
+            125,
+            117
+          ],
+          "type": "heading"
+        },
+        {
+          "id": "d6699921-dc00-42dd-8ec1-747e993c4412",
+          "order": 4,
+          "bbox": [
+            147,
+            78,
+            564,
+            158
+          ],
+          "type": "paragraph"
+        },
+        {
+          "id": "81edfc55-09fb-4729-b3ac-16e1f678f7b0",
+          "order": 5,
+          "bbox": [
+            105,
+            161,
+            127,
+            180
+          ],
+          "type": "heading"
+        },
+        {
+          "id": "1688a00f-de3d-4619-8eba-f3a03cfa236a",
+          "order": 6,
+          "bbox": [
+            148,
+            154,
+            351,
+            179
+          ],
+          "type": "paragraph"
+        },
+        {
+          "id": "197282c5-affe-4c9f-94b4-e3b88cc54491",
+          "order": 7,
+          "bbox": [
+            67,
+            184,
+            85,
+            201
+          ],
+          "type": "heading"
+        },
+        {
+          "id": "a3f7e9d0-d6b6-4240-ad02-7f63000ed4df",
+          "order": 8,
+          "bbox": [
+            97,
+            184,
+            146,
+            206
+          ],
+          "type": "paragraph"
+        },
+        {
+          "id": "703b0211-71e8-4382-b1d0-cb7f5d97aa26",
+          "order": 9,
+          "bbox": [
+            96,
+            199,
+            304,
+            242
+          ],
+          "type": "list"
+        }
+      ]
     }
   ]
 }

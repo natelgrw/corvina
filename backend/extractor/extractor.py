@@ -23,7 +23,7 @@ class PDFExtractor:
     Extracts .png images from input PDFs and saves to dataset directory.
     """
     
-    def __init__(self, dataset_dir: str = "dataset", dpi: int = 300, preprocess: bool = True):
+    def __init__(self, dataset_dir: str = "dataset", dpi: int = 300, preprocess: bool = False):
         """
         Initialize a PDFExtractor instance.
         
@@ -82,8 +82,8 @@ class PDFExtractor:
         
         for idx, image in enumerate(images, start=1):
             # preprocess if enabled
-            if self.preprocess:
-                image = preprocess_image(image)
+            # if self.preprocess:
+            #     image = preprocess_image(image)
             
             # save as PNG
             page_file = images_dir / f"page{idx}.png"

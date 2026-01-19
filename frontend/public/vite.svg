@@ -1,0 +1,8 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="rotate(-45 32 32)">
+    <!-- Top Bar -->
+    <rect x="10" y="12" width="44" height="12" rx="6" fill="black"/>
+    <!-- Stem: Increased height from 24 to 30 -->
+    <rect x="26" y="28" width="12" height="30" rx="6" fill="black"/>
+  </g>
+</svg>

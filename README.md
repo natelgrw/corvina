@@ -1,22 +1,18 @@
 # TeX Transformer: Data Pipeline for LaTeX Model Training
 
-A document processing pipeline that extracts PDF pages, classifies them using Mistral AI's Pixtral VLM, and generates structured JSON output.
+A document processing pipeline that extracts PDF pages, classifies them using Mistral AI's Pixtral VLM, and provides a sleek web interface for manual annotation and dataset curation.
 
-Current Version: **0.3.0**
+Current Version: **0.4.0**
 
 ## 💬 Features
 
 TeX Transformer is under active development. It currently supports the following features:
 
-```
-PDF Input
-   ↓
-Extract Pages (pdf2image + preprocessing)
-   ↓
-Classify Document (Pixtral VLM)
-   ↓
-Save JSON Output + Images
-```
+- **Web Interface**: Modern React-based UI for uploading PDFs, viewing documents, and drawing bounding boxes.
+- **Backend API**: Flask server handling PDF extraction, temporary storage, and dataset management.
+- **AI Classification**: Automatic document classification using Mistral AI's Pixtral VLM.
+
+![Interface Preview](./frontend/public/interface.png)
 
 Each document is first sorted into 1 of 6 document types:
 
@@ -34,29 +30,41 @@ Then sorted into 1 of 4 academic domains:
 - `econ_business`: Economics, Business
 - `humanities`: Languages, History, Social Sciences
 
+The web interface allows for precise bounding box annotation of document elements, classified into the following types:
+
+- `heading`: Structural headings (Chapter, Section, Subsection)
+- `paragraph`: Standard blocks of text
+- `list`: Bulleted or numbered lists
+- `display_math`: Centered or standalone mathematical equations
+- `table`: Tabular data structures
+- `figure`: Images, diagrams, charts, and plots
+- `code`: Source code blocks or algorithms
+- `header_footer`: Page headers, footers, and page numbers
+
 ## Docker Setup
 
-1. Set up your API key
+### 1. Set up your API key
 
-Create a `.env` file:
+Create a `.env` file in the `backend/` directory:
+
 ```bash
-echo "MISTRAL_API_KEY=your_mistral_api_key" > .env
+echo "MISTRAL_API_KEY=your_mistral_api_key" > backend/.env
 ```
 
 Or get your API key at: https://console.mistral.ai/
 
-2. Build Docker image
+### 2. Run the application
+
+Start the full stack (frontend + backend) using Docker Compose:
 
 ```bash
-docker build -t tex_transformer .
+docker-compose up --build
 ```
 
-3. Run the pipeline
+### 3. Access the Interface
 
-```bash
-docker run --rm \
-  -v $(pwd)/input_data:/app/input_data \
-  -v $(pwd)/dataset:/app/dataset \
-  tex_transformer \
-  python main.py input_data/sample_1.pdf --dpi 200
-```
+Open your browser and navigate to:
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:5001
+
+The application handles PDF uploads, page extraction, and annotation submission through the web interface.
