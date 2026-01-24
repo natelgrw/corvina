@@ -5,5 +5,8 @@ export interface Annotation {
     width: number;
     height: number;
     label: string;
+    subtype?: string;
+    content?: any; // Replaces 'text', stores String | Object | Array
     page: number;
+    order?: number;
 }

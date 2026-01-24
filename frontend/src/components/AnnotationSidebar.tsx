@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Annotation } from '../types';
 import { TechDropdown } from './TechDropdown';
-import { DOCUMENT_TYPES, DOMAINS, BOUNDING_BOX_TYPES } from '../constants';
+import { DOCUMENT_TYPES, DOMAINS, BOUNDING_BOX_TYPES, HEADER_SUBTYPES, LIST_SUBTYPES } from '../constants';
 
 interface AnnotationSidebarProps {
     annotations: Annotation[];
@@ -14,6 +14,7 @@ interface AnnotationSidebarProps {
     onHoverAnnotation: (id: string | null) => void;
     onSubmit: () => void;
     isSubmitting: boolean;
+    actionLabel?: string;
 }
 
 // Helper to manage input state so it doesn't jump around or lose focus weirdly
@@ -90,7 +91,8 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
     hoveredId,
     onHoverAnnotation,
     onSubmit,
-    isSubmitting
+    isSubmitting,
+    actionLabel = "SUBMIT"
 }) => {
     const handleLabelChange = (id: string, newLabel: string) => {
         onUpdateAnnotation(id, newLabel);
@@ -234,7 +236,7 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
                 onClick={onSubmit}
                 disabled={isSubmitting}
             >
-                <span>SUBMIT</span>
+                <span>{actionLabel}</span>
                 {isSubmitting && (
                     <>
                         {/* Top Left Pixel */}

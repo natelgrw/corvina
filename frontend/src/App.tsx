@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FileUpload } from './components/FileUpload';
 import { PdfViewer } from './components/PdfViewer';
 import { AnnotationSidebar } from './components/AnnotationSidebar';
+import { TranscriptionView } from './components/TranscriptionView';
 import { LoadingScreen } from './components/LoadingScreen';
 import { TechModal } from './components/TechModal';
 import { SuccessToast } from './components/SuccessToast';
@@ -15,6 +16,9 @@ function App() {
   const [docType, setDocType] = useState('homework');
   const [docDomain, setDocDomain] = useState('math_phys_cs');
   const [hoveredAnnotationId, setHoveredAnnotationId] = useState<string | null>(null);
+
+  // Phase State
+  const [viewMode, setViewMode] = useState<'labeling' | 'transcribing'>('labeling');
 
   // Backend State
   const [isLoading, setIsLoading] = useState(false);
@@ -101,6 +105,72 @@ function App() {
     setAnnotations(prev => prev.map(ann => ann.id === id ? { ...ann, ...rect } : ann));
   }, []);
 
+  const handleUpdateAnnotationText = useCallback((id: string, value: string | any) => {
+    setAnnotations(prev => prev.map(ann => ann.id === id ? { ...ann, content: value } : ann));
+  }, []);
+
+  const handleUpdateSubtype = useCallback((id: string, subtype: string) => {
+    setAnnotations(prev => prev.map(ann => ann.id === id ? { ...ann, subtype } : ann));
+  }, []);
+
+  const validateAnnotations = (): string | null => {
+    for (const ann of annotations) {
+      // 1. Check Content Empty
+      let isEmpty = false;
+      if (!ann.content) {
+        // If no content field, it's definitely empty (unless figure)
+        if (ann.label !== 'figure') isEmpty = true;
+      } else if (typeof ann.content === 'string') {
+        if (ann.content.trim() === '') isEmpty = true;
+      } else if (Array.isArray(ann.content)) {
+        // For table (2D array), check if all cells empty? Or just empty array? 
+        // Let's iterate. If 2D array, check if it has at least one non-empty cell? 
+        // Actually user wants "blank", so if it's completely empty strings.
+        const flat = ann.content.flat();
+        if (flat.every((cell: string) => cell.trim() === '')) isEmpty = true;
+      } else if (typeof ann.content === 'object') {
+        // Dictionary (List/Code)
+        const values = Object.values(ann.content);
+        if (values.length === 0) isEmpty = true;
+        // Also check if all values are empty strings?
+        if (values.every((v: any) => typeof v === 'string' && v.trim() === '')) isEmpty = true;
+      }
+
+      if (isEmpty && ann.label !== 'figure') {
+        return "Some entries are empty. Please add content.";
+      }
+
+      // 2. Check Subtypes
+      if ((ann.label === 'heading' || ann.label === 'list') && !ann.subtype) {
+        return "Some entries are missing a subtype selection. Please go back and fix.";
+      }
+    }
+    return null;
+  };
+
+  const handleFinalSubmit = () => {
+    const error = validateAnnotations();
+    if (error) {
+      setModal({
+        isOpen: true,
+        title: "VALIDATION ERROR",
+        message: error,
+        type: 'alert',
+        confirmText: "OK"
+      });
+      return;
+    }
+
+    setModal({
+      isOpen: true,
+      title: "CONFIRM SUBMISSION",
+      message: "Are you sure you want to submit this annotated document? Make sure all transcriptions are accurate.",
+      type: 'confirm',
+      confirmText: "SUBMIT ALL",
+      onConfirm: executeSubmit
+    });
+  };
+
   // -- Backend Handlers --
 
   const handleFileUpload = async (file: File) => {
@@ -158,7 +228,9 @@ function App() {
             id: a.id,
             order: idx + 1,
             bbox: [Math.round(a.x), Math.round(a.y), Math.round(a.x + a.width), Math.round(a.y + a.height)],
-            type: a.label || 'heading' // default to heading if empty
+            type: a.label || 'heading', // default to heading if empty
+            content: a.content, // Native JSON storage
+            subtype: a.subtype
           }))
       }))
     };
@@ -225,9 +297,13 @@ function App() {
     setModal({
       isOpen: true,
       title: "CONFIRM SUBMISSION",
-      message: "Are you sure you want to submit this annotated document? Make sure all classifications, bounding boxes, and descriptions are accurate.",
+      message: "Are you sure you want to proceed to transcription? You can still edit boxes if you go back.",
       type: 'confirm',
-      onConfirm: executeSubmit
+      confirmText: "YES, NEXT",
+      onConfirm: () => {
+        closeModal();
+        setViewMode('transcribing');
+      }
     });
   };
 
@@ -283,41 +359,55 @@ function App() {
             <FileUpload onFileSelect={handleFileUpload} />
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr', gap: '2rem', height: '100%', overflow: 'hidden' }}>
-            {/* Left Sidebar */}
-            <div style={{ height: '100%', overflow: 'hidden' }}>
-              <AnnotationSidebar
-                annotations={annotations}
-                isDrawing={isDrawing}
-                onToggleDrawing={() => setIsDrawing(!isDrawing)}
-                onUpdateAnnotation={handleUpdateAnnotation}
-                onDeleteAnnotation={handleDeleteAnnotation}
-                onMoveAnnotation={handleMoveAnnotation}
-                hoveredId={hoveredAnnotationId}
-                onHoverAnnotation={setHoveredAnnotationId}
-                onSubmit={handleSubmit}
-                isSubmitting={isSubmitting}
-              />
-            </div>
+          viewMode === 'transcribing' ? (
+            <TranscriptionView
+              key={documentId}
+              file={pdfFile}
+              annotations={annotations}
+              onUpdateAnnotation={handleUpdateAnnotationText}
+              onUpdateSubtype={handleUpdateSubtype}
+              onSubmit={handleFinalSubmit}
+              onBack={() => setViewMode('labeling')}
+            />
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr', gap: '2rem', height: '100%', overflow: 'hidden' }}>
+              {/* Left Sidebar */}
+              <div style={{ height: '100%', overflow: 'hidden' }}>
+                <AnnotationSidebar
+                  annotations={annotations}
+                  isDrawing={isDrawing}
+                  onToggleDrawing={() => setIsDrawing(!isDrawing)}
+                  onUpdateAnnotation={handleUpdateAnnotation}
+                  onDeleteAnnotation={handleDeleteAnnotation}
+                  onMoveAnnotation={handleMoveAnnotation}
+                  hoveredId={hoveredAnnotationId}
+                  onHoverAnnotation={setHoveredAnnotationId}
+                  onSubmit={handleSubmit}
+                  isSubmitting={isSubmitting}
+                  actionLabel="NEXT"
+                />
+              </div>
 
-            {/* Right PDF Viewer */}
-            <div style={{ height: '100%', overflow: 'hidden' }}>
-              <PdfViewer
-                file={pdfFile}
-                annotations={annotations}
-                isDrawing={isDrawing}
-                onAddAnnotation={handleAddAnnotation}
-                onResizeAnnotation={handleResizeAnnotation}
-                onFinishDrawing={() => setIsDrawing(false)}
-                docType={docType}
-                setDocType={setDocType}
-                docDomain={docDomain}
-                setDocDomain={setDocDomain}
-                hoveredId={hoveredAnnotationId}
-                onHoverAnnotation={setHoveredAnnotationId}
-              />
+              {/* Right PDF Viewer */}
+              <div style={{ height: '100%', overflow: 'hidden' }}>
+                <PdfViewer
+                  key={documentId}
+                  file={pdfFile}
+                  annotations={annotations}
+                  isDrawing={isDrawing}
+                  onAddAnnotation={handleAddAnnotation}
+                  onResizeAnnotation={handleResizeAnnotation}
+                  onFinishDrawing={() => setIsDrawing(false)}
+                  docType={docType}
+                  setDocType={setDocType}
+                  docDomain={docDomain}
+                  setDocDomain={setDocDomain}
+                  hoveredId={hoveredAnnotationId}
+                  onHoverAnnotation={setHoveredAnnotationId}
+                />
+              </div>
             </div>
-          </div>
+          )
         )}
       </main>
 

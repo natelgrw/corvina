@@ -2,13 +2,13 @@
 
 A document processing pipeline that extracts PDF pages, classifies them using Mistral AI's Pixtral VLM, and provides a sleek web interface for manual annotation and dataset curation.
 
-Current Version: **0.4.0**
+Current Version: **0.5.0**
 
 ## 💬 Features
 
 TeX Transformer is under active development. It currently supports the following features:
 
-- **Web Interface**: Modern React-based UI for uploading PDFs, viewing documents, and drawing bounding boxes.
+- **Web Interface**: Modern UI for uploading PDFs, drawing bounding boxes, and typing accurate transcriptions.
 - **Backend API**: Flask server handling PDF extraction, temporary storage, and dataset management.
 - **AI Classification**: Automatic document classification using Mistral AI's Pixtral VLM.
 
@@ -41,7 +41,11 @@ The web interface allows for precise bounding box annotation of document element
 - `code`: Source code blocks or algorithms
 - `header_footer`: Page headers, footers, and page numbers
 
-## Docker Setup
+The user is then directed to transcribe the content of each bounding box and provide additional subtype information before pressing submit. The final output is a dataset entry with the input PDF, extracted `.png` images for every page, and a comprehensive `.json` transcribing labeling.
+
+![Subinterface Preview](./frontend/public/subinterface.png)
+
+## 🐋 Docker Setup
 
 ### 1. Set up your API key
 

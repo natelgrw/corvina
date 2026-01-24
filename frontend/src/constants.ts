@@ -22,5 +22,19 @@ export const BOUNDING_BOX_TYPES = [
     'table',
     'figure',
     'code',
-    'header_footer'
+
+    'header',
+    'footer'
+];
+
+export const HEADER_SUBTYPES = [
+    'title',
+    'section',
+    'subsection',
+    'subsubsection'
+];
+
+export const LIST_SUBTYPES = [
+    'bulleted',
+    'numbered'
 ];

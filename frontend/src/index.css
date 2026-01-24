@@ -149,7 +149,7 @@ button:disabled {
   border: 1px solid #000;
   background: #fff;
   z-index: 100;
-  max-height: 300px;
+  max-height: 500px;
   overflow-y: auto;
   margin-top: 4px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);

@@ -12,81 +12,97 @@
       "image_file": "images/page1.png",
       "bounding_boxes": [
         {
-          "id": "dc5d15b6-7af4-4b15-b683-1d5ddd76813d",
+          "id": "3b6a4c5d-7672-4d8c-82a7-0281ed18aed3",
           "order": 1,
           "bbox": [
             7,
-            6,
-            74,
-            33
+            7,
+            75,
+            32
           ],
-          "type": "heading"
+          "type": "heading",
+          "content": "Problem 1",
+          "subtype": "section"
         },
         {
-          "id": "931e5019-f2c8-48b2-9ad4-59d717dcb663",
+          "id": "a8e51cf5-ad9b-495e-8e5e-3915abd5e38f",
           "order": 2,
           "bbox": [
-            9,
-            35,
-            30,
-            54
+            11,
+            36,
+            29,
+            53
           ],
-          "type": "heading"
+          "type": "heading",
+          "content": "a)",
+          "subtype": "subsection"
         },
         {
-          "id": "651a8816-ab7c-4a08-8351-0abf04f8fb63",
+          "id": "21950c7e-12f5-4776-8661-3ca774c9f3c8",
           "order": 3,
           "bbox": [
-            37,
+            38,
             36,
-            85,
-            60
+            84,
+            59
           ],
-          "type": "paragraph"
+          "type": "paragraph",
+          "content": "Proof:"
         },
         {
-          "id": "72b3df43-c018-441b-aa61-97296440355b",
+          "id": "481f1961-a0a7-4434-bc4b-f44430570dee",
           "order": 4,
           "bbox": [
-            38,
-            64,
-            573,
-            175
+            37,
+            61,
+            575,
+            174
           ],
-          "type": "list"
+          "type": "list",
+          "content": {
+            "1": "Let $a = 0$ AND arbitrary $b \\in \\mathbb{N}$",
+            "2": "$0 \\in \\mathbb{N}$, so $a \\in \\mathbb{N}$",
+            "3": "By definition of natural numbers, $0$ is the smallest natural number. Thus, the statement $0 \\leq b$ holds true, since arbitrary $b$ can only be $\\geq 0$",
+            "4": "Thus, $a \\leq b$ when $a = 0$, satisfying the condition $\\square$"
+          },
+          "subtype": "bulleted"
         },
         {
-          "id": "5a680bc7-0e27-43f8-9874-23f084448dea",
+          "id": "a15f2ff6-9410-482e-9690-4822f0ae0338",
           "order": 5,
           "bbox": [
-            13,
-            177,
-            31,
-            196
+            11,
+            176,
+            32,
+            195
           ],
-          "type": "heading"
+          "type": "heading",
+          "content": "b)",
+          "subtype": "subsection"
         },
         {
-          "id": "d85bf672-c27d-4fbd-83e8-f8ea9b8059fc",
+          "id": "1ca177e1-d873-4e00-bf15-8e51c32436a1",
           "order": 6,
           "bbox": [
-            45,
-            179,
-            484,
-            206
+            46,
+            177,
+            491,
+            209
           ],
-          "type": "display_math"
+          "type": "display_math",
+          "content": "$$x^2 - 2x - 8 = 0, (x-4)(x+2) = 0, x = 4, -2$$"
         },
         {
-          "id": "951934c5-3c4d-4031-8daa-229d870b7e6e",
+          "id": "e39110c4-1de9-4884-ad34-66fde971b445",
           "order": 7,
           "bbox": [
-            48,
+            47,
             213,
-            324,
-            244
+            325,
+            246
           ],
-          "type": "paragraph"
+          "type": "paragraph",
+          "content": "Roots of Quadratic Equation: $4, -2$"
         }
       ]
     }

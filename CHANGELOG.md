@@ -1,3 +1,12 @@
+Version **0.5.0**
+
+Date Released: **01/24/2026**
+
+- Support for transcribing contents of bounding boxes
+- Custom annotation interface support for each type of bounding box
+- Revamped `.json` data output format
+
+
 Version **0.4.0**
 
 Date Released: **01/19/2026**

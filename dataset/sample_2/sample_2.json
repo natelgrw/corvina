@@ -12,73 +12,86 @@
       "image_file": "images/page1.png",
       "bounding_boxes": [
         {
-          "id": "57d61e3c-6027-4c8e-9920-d9dce26905b4",
+          "id": "5ef4c2be-5336-40c0-ae2a-970f9c736d2f",
           "order": 1,
           "bbox": [
             97,
-            87,
+            86,
             167,
-            109
+            110
           ],
-          "type": "heading"
+          "type": "heading",
+          "content": "Problem 1",
+          "subtype": "section"
         },
         {
-          "id": "8fce6cfe-9412-4585-a141-df94f7de63aa",
+          "id": "f2ecc985-7ea5-4a5a-a306-85810b10177a",
           "order": 2,
           "bbox": [
-            97,
+            98,
             110,
-            143,
-            130
+            141,
+            129
           ],
-          "type": "paragraph"
+          "type": "paragraph",
+          "content": "Proof:"
         },
         {
-          "id": "c4a16d13-50d7-4f7b-9350-cd1c39a267ac",
+          "id": "e946d591-207d-4258-8bf8-3167e86f0cd8",
           "order": 3,
           "bbox": [
             99,
-            132,
-            524,
-            214
+            131,
+            530,
+            215
           ],
-          "type": "list"
+          "type": "list",
+          "content": {
+            "1": "Assume there exists an $a \\in \\mathbb{R}$ such that $a \\leq b$ for all $b \\in \\mathbb{R}$.",
+            "2": "$a - 1 < a$, so it is not true that $a \\leq b$ for all $b \\in \\mathbb{R}$. Therefore, the assumption is false."
+          },
+          "subtype": "bulleted"
         },
         {
-          "id": "b9fc08f6-5ffa-4d53-89cf-3886607298d3",
+          "id": "af217edb-4017-4c98-9df5-09a3d8b27472",
           "order": 4,
           "bbox": [
             100,
-            238,
-            171,
+            237,
+            174,
             257
           ],
-          "type": "heading"
+          "type": "heading",
+          "content": "Problem 2",
+          "subtype": "section"
         },
         {
-          "id": "53b0def3-6b7c-4e49-8f2b-0c9ae13b49d2",
+          "id": "ed681ddc-c00b-44ec-8a73-9967ad0b68f6",
           "order": 5,
           "bbox": [
-            104,
-            260,
+            103,
+            259,
             122,
             276
           ],
-          "type": "heading"
+          "type": "heading",
+          "content": "a)",
+          "subtype": "subsection"
         },
         {
-          "id": "3050e516-4d42-4518-a747-ee3d9fe9f222",
+          "id": "7ff61c26-d41b-4cfa-8c25-b7dec8c76f3a",
           "order": 6,
           "bbox": [
-            133,
-            261,
-            234,
+            130,
+            259,
+            239,
             278
           ],
-          "type": "display_math"
+          "type": "display_math",
+          "content": "$$2 + 4 = 6$$"
         },
         {
-          "id": "2dae3e5f-16b6-4b24-acda-ac5e1088fe68",
+          "id": "74c1b4de-3f2d-4257-b22f-379cba3f2efb",
           "order": 7,
           "bbox": [
             103,
@@ -86,18 +99,21 @@
             122,
             298
           ],
-          "type": "heading"
+          "type": "heading",
+          "content": "b)",
+          "subtype": "subsection"
         },
         {
-          "id": "f2bce36a-6f88-4388-b798-4a9d6fa1d239",
+          "id": "5f41dd69-88bb-49b1-bfc9-129fe91a2fc3",
           "order": 8,
           "bbox": [
-            135,
-            281,
-            264,
-            300
+            132,
+            280,
+            265,
+            303
           ],
-          "type": "display_math"
+          "type": "display_math",
+          "content": "$$40 % 3 = 1$$"
         }
       ]
     },
@@ -106,103 +122,121 @@
       "image_file": "images/page2.png",
       "bounding_boxes": [
         {
-          "id": "ad35b9bf-5906-4de3-9e13-accd3ade02be",
+          "id": "35194f5d-72d5-4871-aa7d-2ee0d85fb19a",
           "order": 1,
           "bbox": [
             63,
-            70,
-            139,
-            94
+            68,
+            138,
+            96
           ],
-          "type": "heading"
+          "type": "heading",
+          "content": "Problem 3",
+          "subtype": "section"
         },
         {
-          "id": "863f993a-8851-4a78-878e-951b90bf369d",
+          "id": "4f30a0c0-5a0d-4792-8bfc-baac8029ea2a",
           "order": 2,
           "bbox": [
-            68,
-            95,
-            87,
-            114
+            67,
+            96,
+            86,
+            112
           ],
-          "type": "heading"
+          "type": "heading",
+          "content": "a)",
+          "subtype": "subsection"
         },
         {
-          "id": "5a96508d-908f-42c3-ac60-5f2309fa9240",
+          "id": "aa4f1dd4-0926-4495-b3c6-b6a3bbaaf247",
           "order": 3,
           "bbox": [
             109,
             98,
             125,
-            117
+            115
           ],
-          "type": "heading"
+          "type": "heading",
+          "content": "i)",
+          "subtype": "subsubsection"
         },
         {
-          "id": "d6699921-dc00-42dd-8ec1-747e993c4412",
+          "id": "0c0a3abb-7bc1-4278-8875-8e26914af6bf",
           "order": 4,
           "bbox": [
-            147,
-            78,
-            564,
-            158
+            145,
+            76,
+            558,
+            157
           ],
-          "type": "paragraph"
+          "type": "paragraph",
+          "content": "The set of states is $\\mathbb{N} \\times \\mathbb{N} = {(h, t) | h, t \\in \\mathbb{N}}$, where $(h, t)$ represents the state with $h$ heads and $t$ tails."
         },
         {
-          "id": "81edfc55-09fb-4729-b3ac-16e1f678f7b0",
+          "id": "725b006a-62e5-4a9c-84a9-6bcc9a21fb14",
           "order": 5,
           "bbox": [
-            105,
-            161,
-            127,
-            180
-          ],
-          "type": "heading"
-        },
-        {
-          "id": "1688a00f-de3d-4619-8eba-f3a03cfa236a",
-          "order": 6,
-          "bbox": [
-            148,
-            154,
-            351,
+            106,
+            160,
+            125,
             179
           ],
-          "type": "paragraph"
+          "type": "heading",
+          "content": "ii)",
+          "subtype": "subsubsection"
         },
         {
-          "id": "197282c5-affe-4c9f-94b4-e3b88cc54491",
+          "id": "9be508c5-a6d9-43ed-87f4-8d49c129da5e",
+          "order": 6,
+          "bbox": [
+            139,
+            153,
+            357,
+            180
+          ],
+          "type": "paragraph",
+          "content": "The start state is $(98, 4)$"
+        },
+        {
+          "id": "3a5e897a-cbb1-4e54-babf-f924c9ec3288",
           "order": 7,
           "bbox": [
             67,
             184,
-            85,
+            83,
             201
           ],
-          "type": "heading"
+          "type": "heading",
+          "content": "b)",
+          "subtype": "subsection"
         },
         {
-          "id": "a3f7e9d0-d6b6-4240-ad02-7f63000ed4df",
+          "id": "2fa8f140-f4cf-43dd-b252-d53bfa8b4834",
           "order": 8,
           "bbox": [
             97,
-            184,
+            183,
             146,
-            206
+            205
           ],
-          "type": "paragraph"
+          "type": "paragraph",
+          "content": "Proof:"
         },
         {
-          "id": "703b0211-71e8-4382-b1d0-cb7f5d97aa26",
+          "id": "6566016a-1558-43ae-ad80-0fd0a713b82c",
           "order": 9,
           "bbox": [
-            96,
-            199,
-            304,
-            242
+            94,
+            198,
+            306,
+            244
           ],
-          "type": "list"
+          "type": "list",
+          "content": {
+            "1": "$P(n) \\coloneq a_n \\leq c \\cdot 2^n",
+            "2": "This is a sample proof!"
+          },
+          "subtype": "bulleted"
         }
       ]
     }
