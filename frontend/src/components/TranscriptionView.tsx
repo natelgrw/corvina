@@ -57,8 +57,16 @@ const serializeTable = (data: string[][]): any => {
 };
 
 const parseCode = (annotation: Annotation): string[] => {
-    // 1. Check native content
-    if (annotation.content && typeof annotation.content === 'object' && !Array.isArray(annotation.content)) {
+    // 1. Check native content (Array) [NEW STANDARD]
+    if (annotation.content && Array.isArray(annotation.content)) {
+        // Simple check to ensure it's not a table (which is string[][]) or just assume usage based on label
+        // Since this parser is called for 'code'/'list', we expect string[].
+        // Even if it's legacy 2D array, we might handle it, but schema says lists are 1D.
+        return annotation.content as string[];
+    }
+
+    // 2. Check native content (Legacy Dict)
+    if (annotation.content && typeof annotation.content === 'object') {
         const dict = annotation.content;
         const sortedKeys = Object.keys(dict).sort((a, b) => parseInt(a) - parseInt(b));
         return sortedKeys.map(k => dict[k]);
@@ -79,11 +87,7 @@ const parseCode = (annotation: Annotation): string[] => {
 };
 
 const serializeCode = (lines: string[]): any => {
-    const dict: { [key: string]: string } = {};
-    lines.forEach((line, idx) => {
-        dict[(idx + 1).toString()] = line;
-    });
-    return dict; // Return object directly
+    return lines; // Return array directly [NEW STANDARD]
 };
 
 // Reuse code serialization logic for lists since format is identical

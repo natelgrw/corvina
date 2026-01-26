@@ -59,12 +59,12 @@
             174
           ],
           "type": "list",
-          "content": {
-            "1": "Let $a = 0$ AND arbitrary $b \\in \\mathbb{N}$",
-            "2": "$0 \\in \\mathbb{N}$, so $a \\in \\mathbb{N}$",
-            "3": "By definition of natural numbers, $0$ is the smallest natural number. Thus, the statement $0 \\leq b$ holds true, since arbitrary $b$ can only be $\\geq 0$",
-            "4": "Thus, $a \\leq b$ when $a = 0$, satisfying the condition $\\square$"
-          },
+          "content": [
+            "Let $a = 0$ AND arbitrary $b \\in \\mathbb{N}$",
+            "$0 \\in \\mathbb{N}$, so $a \\in \\mathbb{N}$",
+            "By definition of natural numbers, $0$ is the smallest natural number. Thus, the statement $0 \\leq b$ holds true, since arbitrary $b$ can only be $\\geq 0$",
+            "Thus, $a \\leq b$ when $a = 0$, satisfying the condition $\\square$"
+          ],
           "subtype": "bulleted"
         },
         {

@@ -46,10 +46,10 @@
             215
           ],
           "type": "list",
-          "content": {
-            "1": "Assume there exists an $a \\in \\mathbb{R}$ such that $a \\leq b$ for all $b \\in \\mathbb{R}$.",
-            "2": "$a - 1 < a$, so it is not true that $a \\leq b$ for all $b \\in \\mathbb{R}$. Therefore, the assumption is false."
-          },
+          "content": [
+            "Assume there exists an $a \\in \\mathbb{R}$ such that $a \\leq b$ for all $b \\in \\mathbb{R}$.",
+            "$a - 1 < a$, so it is not true that $a \\leq b$ for all $b \\in \\mathbb{R}$. Therefore, the assumption is false."
+          ],
           "subtype": "bulleted"
         },
         {
@@ -232,10 +232,10 @@
             244
           ],
           "type": "list",
-          "content": {
-            "1": "$P(n) \\coloneq a_n \\leq c \\cdot 2^n",
-            "2": "This is a sample proof!"
-          },
+          "content": [
+            "$P(n) \\coloneq a_n \\leq c \\cdot 2^n",
+            "This is a sample proof!"
+          ],
           "subtype": "bulleted"
         }
       ]

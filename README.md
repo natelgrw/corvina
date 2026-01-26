@@ -2,7 +2,7 @@
 
 A document processing pipeline that extracts PDF pages, classifies them using Mistral AI's Pixtral VLM, and provides a sleek web interface for manual annotation and dataset curation.
 
-Current Version: **0.5.0**
+Current Version: **0.5.1**
 
 ## 💬 Features
 
