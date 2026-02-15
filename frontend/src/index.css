@@ -213,3 +213,26 @@ button:disabled {
   background: #000;
   color: #fff;
 }
+/* Tech Input (Text) - Matches Dropdown Trigger */
+.tech-input {
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  width: 100%;
+  outline: none;
+  transition: all 0.2s ease;
+  color: var(--color-text);
+  border-radius: 0;
+  -webkit-appearance: none;
+}
+
+.tech-input:focus {
+  border-color: #000;
+  background-color: #f9f9f9;
+}
+
+.tech-input::placeholder {
+  color: #aaa;
+}

@@ -1,24 +1,37 @@
 import React, { useState, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { FileUpload } from './components/FileUpload';
-import { PdfViewer } from './components/PdfViewer';
+import { ImageViewer } from './components/ImageViewer';
 import { AnnotationSidebar } from './components/AnnotationSidebar';
 import { TranscriptionView } from './components/TranscriptionView';
+import { TranscriptionSidebar } from './components/TranscriptionSidebar';
+
 import { LoadingScreen } from './components/LoadingScreen';
 import { TechModal } from './components/TechModal';
 import { SuccessToast } from './components/SuccessToast';
 import type { Annotation } from './types';
 
+
 function App() {
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [imgFile, setImgFile] = useState<File | null>(null);
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [docType, setDocType] = useState('homework');
-  const [docDomain, setDocDomain] = useState('math_phys_cs');
+
+  // New Metadata State
+  const [drawingType, setDrawingType] = useState('handwritten');
+  const [source, setSource] = useState('notebook');
+
+  // Tool State
+  const [toolMode, setToolMode] = useState<'box' | 'line' | 'node' | 'connection'>('box');
+
   const [hoveredAnnotationId, setHoveredAnnotationId] = useState<string | null>(null);
 
-  // Phase State
-  const [viewMode, setViewMode] = useState<'labeling' | 'transcribing'>('labeling');
+  // Phase State ('annotation' -> 'transcription')
+  const [phase, setPhase] = useState<'annotation' | 'transcription'>('annotation');
+  const [isDrawingText, setIsDrawingText] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [transcriptionIndex, setTranscriptionIndex] = useState(0);
+  const [linkingTextId, setLinkingTextId] = useState<string | null>(null);
 
   // Backend State
   const [isLoading, setIsLoading] = useState(false);
@@ -26,28 +39,7 @@ function App() {
   const [documentId, setDocumentId] = useState<string | null>(null);
   const [pageImages, setPageImages] = useState<any[]>([]);
 
-  // Cleanup helper
-  const cleanupSession = useCallback((id: string) => {
-    if (!id) return;
-    try {
-      // Use sendBeacon for reliability during unload
-      const blob = new Blob([JSON.stringify({ document_id: id })], { type: 'application/json' });
-      navigator.sendBeacon('http://localhost:5001/cleanup', blob);
-    } catch (e) {
-      console.error("Cleanup failed", e);
-    }
-  }, []);
 
-  // Handle browser close / refresh
-  React.useEffect(() => {
-    const handleUnload = () => {
-      if (documentId) {
-        cleanupSession(documentId);
-      }
-    };
-    window.addEventListener('beforeunload', handleUnload);
-    return () => window.removeEventListener('beforeunload', handleUnload);
-  }, [documentId, cleanupSession]);
 
   // Modal State
   const [modal, setModal] = useState<{
@@ -73,9 +65,15 @@ function App() {
   // When adding, we expect the annotation to already have x, y, width, height, AND page.
   // We only add the ID and Label here.
   const handleAddAnnotation = useCallback((rect: Omit<Annotation, 'id' | 'label'>) => {
+    // If it's a line, default label to 'connection' to bypass validation
+    const type = (rect as any).type;
+    let label = '';
+    if (type === 'line' || type === 'connection') label = 'connection';
+    if (type === 'node') label = 'node';
+
     const newAnnotation: Annotation = {
       id: uuidv4(),
-      label: '', // Default empty label
+      label,
       ...rect
     };
     setAnnotations(prev => [...prev, newAnnotation]);
@@ -86,7 +84,18 @@ function App() {
   }, []);
 
   const handleDeleteAnnotation = useCallback((id: string) => {
-    setAnnotations(prev => prev.filter(ann => ann.id !== id));
+    setAnnotations(prev => {
+      // 1. Remove the item itself
+      const nextAnnotations = prev.filter(ann => ann.id !== id);
+
+      // 2. Remove any connections attached to it
+      return nextAnnotations.filter(ann => {
+        if (ann.type === 'connection') {
+          return ann.sourceId !== id && ann.targetId !== id;
+        }
+        return true;
+      });
+    });
   }, []);
 
   const handleMoveAnnotation = useCallback((fromIndex: number, toIndex: number) => {
@@ -105,66 +114,16 @@ function App() {
     setAnnotations(prev => prev.map(ann => ann.id === id ? { ...ann, ...rect } : ann));
   }, []);
 
-  const handleUpdateAnnotationText = useCallback((id: string, value: string | any) => {
-    setAnnotations(prev => prev.map(ann => ann.id === id ? { ...ann, content: value } : ann));
-  }, []);
 
-  const handleUpdateSubtype = useCallback((id: string, subtype: string) => {
-    setAnnotations(prev => prev.map(ann => ann.id === id ? { ...ann, subtype } : ann));
-  }, []);
 
-  const validateAnnotations = (): string | null => {
-    for (const ann of annotations) {
-      // 1. Check Content Empty
-      let isEmpty = false;
-      if (!ann.content) {
-        // If no content field, it's definitely empty (unless figure)
-        if (ann.label !== 'figure') isEmpty = true;
-      } else if (typeof ann.content === 'string') {
-        if (ann.content.trim() === '') isEmpty = true;
-      } else if (Array.isArray(ann.content)) {
-        // For table (2D array), check if all cells empty? Or just empty array? 
-        // Let's iterate. If 2D array, check if it has at least one non-empty cell? 
-        // Actually user wants "blank", so if it's completely empty strings.
-        const flat = ann.content.flat();
-        if (flat.every((cell: string) => cell.trim() === '')) isEmpty = true;
-      } else if (typeof ann.content === 'object') {
-        // Dictionary (List/Code)
-        const values = Object.values(ann.content);
-        if (values.length === 0) isEmpty = true;
-        // Also check if all values are empty strings?
-        if (values.every((v: any) => typeof v === 'string' && v.trim() === '')) isEmpty = true;
-      }
 
-      if (isEmpty && ann.label !== 'figure') {
-        return "Some entries are empty. Please add content.";
-      }
-
-      // 2. Check Subtypes
-      if ((ann.label === 'heading' || ann.label === 'list') && !ann.subtype) {
-        return "Some entries are missing a subtype selection. Please go back and fix.";
-      }
-    }
-    return null;
-  };
 
   const handleFinalSubmit = () => {
-    const error = validateAnnotations();
-    if (error) {
-      setModal({
-        isOpen: true,
-        title: "VALIDATION ERROR",
-        message: error,
-        type: 'alert',
-        confirmText: "OK"
-      });
-      return;
-    }
-
+    // Phase check handled in Transcription Flow
     setModal({
       isOpen: true,
       title: "CONFIRM SUBMISSION",
-      message: "Are you sure you want to submit this annotated document? Make sure all transcriptions are accurate.",
+      message: "Are you sure you want to submit this annotated dataset?",
       type: 'confirm',
       confirmText: "SUBMIT ALL",
       onConfirm: executeSubmit
@@ -179,20 +138,29 @@ function App() {
     const formData = new FormData();
     formData.append('file', file);
 
+    // Enforce minimum 3s loading time
+    const minLoadTime = new Promise(resolve => setTimeout(resolve, 3000));
+
     try {
-      const response = await fetch('http://localhost:5001/upload', {
-        method: 'POST',
-        body: formData,
-      });
+      const [response] = await Promise.all([
+        fetch('http://localhost:5001/upload', {
+          method: 'POST',
+          body: formData,
+        }),
+        minLoadTime
+      ]);
       const data = await response.json();
 
       if (data.status === 'success') {
         setDocumentId(data.document_id);
-        setDocType(data.classification.type);
-        setDocDomain(data.classification.domain);
+        // Default values for new schema
+        setDrawingType('handwritten');
+        setSource('notebook');
         setPageImages(data.pages); // Store image info
-        setPdfFile(file); // Load viewer
+        setPageImages(data.pages); // Store image info
+        setImgFile(file); // Load viewer
         setAnnotations([]); // Clear annotations
+        setPhase('annotation'); // Reset phase
       } else {
         alert(`Upload failed: ${data.error}`);
       }
@@ -213,25 +181,37 @@ function App() {
     // Construct Payload
     const payload = {
       document_id: documentId,
-      pdf_file: pdfFile?.name || `${documentId}.pdf`,
+      pdf_file: imgFile?.name || `${documentId}.png`,
       num_pages: pageImages.length,
       classification: {
-        type: docType,
-        domain: docDomain
+        drawing_type: drawingType,
+        source: source
       },
-      pages: pageImages.map((pg) => ({
-        page_number: pg.page_number,
-        image_file: pg.image_file,
-        bounding_boxes: annotations
-          .filter(a => a.page === pg.page_number)
-          .map((a, idx) => ({
-            id: a.id,
-            order: idx + 1,
-            bbox: [Math.round(a.x), Math.round(a.y), Math.round(a.x + a.width), Math.round(a.y + a.height)],
-            type: a.label || 'heading', // default to heading if empty
-            content: a.content, // Native JSON storage
-            subtype: a.subtype
-          }))
+      annotations: annotations.map((a, idx) => ({
+        id: a.id,
+        order: idx + 1,
+        type: a.type,
+        label: a.label,
+        // For box (component)
+        bbox: a.type === 'box' || a.type === 'text' ? [Math.round(a.x), Math.round(a.y), Math.round(a.x + a.width), Math.round(a.y + a.height)] : undefined,
+        // For node
+        position: a.type === 'node' ? [Math.round(a.x + a.width / 2), Math.round(a.y + a.height / 2)] : undefined,
+        // For line (legacy)
+        points: a.type === 'line' ? a.points : undefined,
+        // Connections
+        source_id: a.sourceId,
+        target_id: a.targetId,
+        // Transcription (text annotations)
+        raw_text: a.rawText,
+        is_ignored: a.isIgnored || false,
+        linked_annotation_id: a.linkedAnnotationId,
+        label_name: a.type === 'text' ? (a.label && a.label.trim() ? a.label.trim() : undefined) : undefined,
+        values: a.values?.map(v => ({
+          value: v.value,
+          unit_prefix: v.unitPrefix,
+          unit_suffix: v.unitSuffix
+        })),
+        transcription_box: a.transcriptionBox ? [Math.round(a.transcriptionBox.x), Math.round(a.transcriptionBox.y), Math.round(a.transcriptionBox.width), Math.round(a.transcriptionBox.height)] : undefined
       }))
     };
 
@@ -247,12 +227,13 @@ function App() {
         setShowSuccessToast(true);
 
         // Reset to Home
-        setPdfFile(null);
+        setImgFile(null);
         setAnnotations([]);
-        setDocType('homework');
-        setDocDomain('math_phys_cs');
+        setDrawingType('handwritten');
+        setSource('notebook');
         setDocumentId(null);
         setPageImages([]);
+        setPhase('annotation');
       } else {
         alert(`Save failed: ${data.error}`);
       }
@@ -273,8 +254,9 @@ function App() {
     // 1. Validation: Check for unlabeled boxes
     const unlabeled = annotations.filter(a => !a.label || a.label.trim() === '');
     if (unlabeled.length > 0) {
+      // ... (existing validation logic)
       const count = unlabeled.length;
-      const noun = count === 1 ? "bounding box" : "bounding boxes";
+      const noun = count === 1 ? "annotation" : "annotations";
       const verb = count === 1 ? "is" : "are";
 
       setModal({
@@ -282,9 +264,9 @@ function App() {
         title: "MISSING LABELS",
         message: (
           <span>
-            Cannot submit. <strong>{count} {noun}</strong> {verb} missing labels.
+            Cannot proceed. <strong>{count} {noun}</strong> {verb} missing labels.
             <br /><br />
-            Please select a type for all boxes before proceeding.
+            Please select a label for all items before proceeding.
           </span>
         ),
         type: 'alert',
@@ -293,19 +275,13 @@ function App() {
       return;
     }
 
-    // 2. Confirmation
-    setModal({
-      isOpen: true,
-      title: "CONFIRM SUBMISSION",
-      message: "Are you sure you want to proceed to transcription? You can still edit boxes if you go back.",
-      type: 'confirm',
-      confirmText: "YES, NEXT",
-      onConfirm: () => {
-        closeModal();
-        setViewMode('transcribing');
-      }
-    });
+    // 2. Transition to Transcription Phase
+    setPhase('transcription');
   };
+
+
+
+
 
   return (
     <div className="container" style={{ padding: '2rem', height: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
@@ -321,25 +297,18 @@ function App() {
         alignItems: 'center'
       }}>
         <h1 style={{ fontSize: '1.5rem', letterSpacing: '-0.5px' }}>
-          <span style={{ fontWeight: 600 }}>TeX Transformer</span>
+          <span style={{ fontWeight: 600 }}>Circuit Annotator</span>
         </h1>
-        {pdfFile && (
+        {imgFile && (
           <button
             onClick={() => {
-              if (documentId) {
-                // Explicit fetch for button click (better valid response handling than beacon)
-                fetch('http://localhost:5001/cleanup', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ document_id: documentId })
-                }).catch(console.error);
-              }
-              setPdfFile(null);
+              setImgFile(null);
               setAnnotations([]);
-              setDocType('homework');
-              setDocDomain('math_phys_cs');
+              setDrawingType('handwritten');
+              setSource('notebook');
               setDocumentId(null);
               setPageImages([]);
+              setPhase('annotation');
             }}
             className="close-btn"
           >
@@ -348,34 +317,31 @@ function App() {
         )}
       </header>
 
-      <main style={{ flex: pdfFile ? 1 : 'unset', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        {!pdfFile ? (
+      <main style={{ flex: imgFile ? 1 : 'unset', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        {!imgFile ? (
           <div style={{ maxWidth: '600px', margin: '4rem auto' }}>
-            <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>DATA ANNOTATION PIPELINE</h2>
+            <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>CIRCUIT ANNOTATION PIPELINE</h2>
             <p style={{ lineHeight: '1.6', opacity: 0.8 }}>
-              Upload a PDF document to begin analysis and visualization.
-              System supports single and multi-page documents.
+              Upload a Circuit Image (PNG) to begin.
             </p>
             <FileUpload onFileSelect={handleFileUpload} />
           </div>
         ) : (
-          viewMode === 'transcribing' ? (
-            <TranscriptionView
-              key={documentId}
-              file={pdfFile}
-              annotations={annotations}
-              onUpdateAnnotation={handleUpdateAnnotationText}
-              onUpdateSubtype={handleUpdateSubtype}
-              onSubmit={handleFinalSubmit}
-              onBack={() => setViewMode('labeling')}
-            />
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr', gap: '2rem', height: '100%', overflow: 'hidden' }}>
-              {/* Left Sidebar */}
-              <div style={{ height: '100%', overflow: 'hidden' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: phase === 'transcription' ? '1fr 1fr' : '350px 1fr',
+            gap: '2rem',
+            height: '100%',
+            overflow: 'hidden'
+          }}>
+            {/* Left Sidebar */}
+            <div style={{ height: '100%', overflow: 'hidden' }}>
+              {phase === 'annotation' ? (
                 <AnnotationSidebar
                   annotations={annotations}
                   isDrawing={isDrawing}
+                  toolMode={toolMode}
+                  setToolMode={setToolMode}
                   onToggleDrawing={() => setIsDrawing(!isDrawing)}
                   onUpdateAnnotation={handleUpdateAnnotation}
                   onDeleteAnnotation={handleDeleteAnnotation}
@@ -384,35 +350,69 @@ function App() {
                   onHoverAnnotation={setHoveredAnnotationId}
                   onSubmit={handleSubmit}
                   isSubmitting={isSubmitting}
-                  actionLabel="NEXT"
+                  actionLabel="CONTINUE"
                 />
-              </div>
+              ) : (
+                <TranscriptionSidebar
+                  annotations={annotations}
+                  onUpdateAnnotation={(id, updates) => {
+                    setAnnotations(prev => prev.map(a => a.id === id ? { ...a, ...updates } : a));
+                  }}
+                  onDeleteAnnotation={handleDeleteAnnotation}
+                  onFinish={handleFinalSubmit}
+                  hoveredId={hoveredAnnotationId}
+                  onHoverId={setHoveredAnnotationId}
+                  isDrawing={isDrawingText}
+                  onToggleDrawing={() => setIsDrawingText(!isDrawingText)}
+                  linkingTextId={linkingTextId}
+                  setLinkingTextId={setLinkingTextId}
+                />
+              )}
+            </div>
 
-              {/* Right PDF Viewer */}
-              <div style={{ height: '100%', overflow: 'hidden' }}>
-                <PdfViewer
+            {/* Right Image Viewer */}
+            <div style={{ height: '100%', overflow: 'hidden' }}>
+              {phase === 'annotation' ? (
+                <ImageViewer
                   key={documentId}
-                  file={pdfFile}
+                  file={imgFile!}
                   annotations={annotations}
                   isDrawing={isDrawing}
+                  toolMode={toolMode}
                   onAddAnnotation={handleAddAnnotation}
                   onResizeAnnotation={handleResizeAnnotation}
                   onFinishDrawing={() => setIsDrawing(false)}
-                  docType={docType}
-                  setDocType={setDocType}
-                  docDomain={docDomain}
-                  setDocDomain={setDocDomain}
+                  drawingType={drawingType}
+                  setDrawingType={setDrawingType}
+                  source={source}
+                  setSource={setSource}
                   hoveredId={hoveredAnnotationId}
                   onHoverAnnotation={setHoveredAnnotationId}
                 />
-              </div>
+              ) : (
+                <TranscriptionView
+                  file={imgFile!}
+                  annotations={annotations}
+                  onAddTextAnnotation={(rect) => handleAddAnnotation({ ...rect, type: 'text', page: 1 })}
+                  onResizeAnnotation={handleResizeAnnotation}
+                  hoveredId={hoveredAnnotationId}
+                  onHoverId={setHoveredAnnotationId}
+                  isDrawing={isDrawingText}
+                  onFinishDrawing={() => setIsDrawingText(false)}
+                  linkingTextId={linkingTextId}
+                  onLinkAnnotation={(textId, targetId) => {
+                    setAnnotations(prev => prev.map(a => a.id === textId ? { ...a, linkedAnnotationId: targetId } : a));
+                    setLinkingTextId(null);
+                  }}
+                />
+              )}
             </div>
-          )
+          </div>
         )}
       </main>
 
-      <footer style={{ marginTop: !pdfFile ? '8rem' : '2rem', textAlign: 'center', fontSize: '0.85rem', opacity: 0.4 }}>
-        DATA IN. INTELLIGENCE OUT.
+      <footer style={{ marginTop: !imgFile ? '8rem' : '2rem', textAlign: 'center', fontSize: '0.85rem', opacity: 0.4 }}>
+        CIRCUIT DATASET BUILDER
       </footer>
 
 
@@ -429,7 +429,7 @@ function App() {
 
       <SuccessToast
         isVisible={showSuccessToast}
-        message="Document annotation submitted! Thank you."
+        message="Circuit annotation saved!"
         onClose={() => setShowSuccessToast(false)}
       />
     </div >

@@ -1,21 +1,16 @@
-version: '3.8'
-
 services:
   backend:
     build: ./backend
-    container_name: tex_transformer_backend
+    container_name: corvina_backend
     ports:
       - "5001:5001"
     volumes:
       - ./dataset:/app/dataset
-      - ./backend/.env:/app/.env
-    environment:
-      - FLASK_ENV=development
     restart: unless-stopped
 
   frontend:
     build: ./frontend
-    container_name: tex_transformer_frontend
+    container_name: corvina_frontend
     ports:
       - "5173:5173"
     volumes:

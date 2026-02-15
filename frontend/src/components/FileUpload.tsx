@@ -31,10 +31,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect }) => {
 
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
             const file = e.dataTransfer.files[0];
-            if (file.type === 'application/pdf') {
+            if (file.type === 'image/png') {
                 onFileSelect(file);
             } else {
-                alert('Please upload a PDF file.');
+                alert('Please upload a PNG file.');
             }
         }
     }, [onFileSelect]);
@@ -67,13 +67,13 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect }) => {
             <input
                 type="file"
                 id="file-input"
-                accept="application/pdf"
+                accept="image/png"
                 style={{ display: 'none' }}
                 onChange={handleChange}
             />
             <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>+</div>
             <p style={{ letterSpacing: '1px' }}>
-                {isDragging ? 'DROP PDF HERE' : 'DRAG PDF OR CLICK TO UPLOAD'}
+                {isDragging ? 'DROP PNG HERE' : 'DRAG PNG OR CLICK TO UPLOAD'}
             </p>
         </div>
     );

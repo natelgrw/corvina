@@ -24,7 +24,7 @@ export const LoadingScreen: React.FC = () => {
             </div>
 
             <div style={{ marginTop: '2rem', fontSize: '0.9rem', letterSpacing: '2px', fontWeight: 600 }}>
-                PROCESSING DOCUMENT
+                PROCESSING IMAGE...
             </div>
 
             <style>{`

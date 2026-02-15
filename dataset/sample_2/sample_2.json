@@ -1,242 +1,138 @@
 {
-  "document_id": "sample_2",
-  "pdf_file": "sample_2.pdf",
-  "num_pages": 2,
+  "image_file": "sample_2.png",
   "classification": {
-    "type": "homework",
-    "domain": "math_phys_cs"
+    "drawing_type": "handwritten",
+    "source": "notebook"
   },
-  "pages": [
+  "graph": {
+    "components": [
+      {
+        "id": "7cc19591-08ce-4aa3-a918-981516175d76",
+        "label": "ideal_voltage_source",
+        "bbox": [
+          88,
+          125,
+          250,
+          281
+        ]
+      },
+      {
+        "id": "f93e321a-4262-4c80-acc4-cd0319561f8e",
+        "label": "resistor",
+        "bbox": [
+          266,
+          8,
+          443,
+          84
+        ]
+      },
+      {
+        "id": "59673c7b-013f-47a8-aa60-ea4cb0b28024",
+        "label": "resistor",
+        "bbox": [
+          607,
+          106,
+          688,
+          283
+        ]
+      },
+      {
+        "id": "e95cc94d-fee7-449c-af40-ba9847aaaf51",
+        "label": "resistor",
+        "bbox": [
+          776,
+          99,
+          867,
+          290
+        ]
+      },
+      {
+        "id": "11719143-cbff-4cd4-bf0c-c6bf964e65a1",
+        "label": "resistor",
+        "bbox": [
+          265,
+          312,
+          440,
+          400
+        ]
+      }
+    ],
+    "nodes": [
+      {
+        "id": "4f537c23-fe9a-45cb-a57d-e70c22f1a62f",
+        "position": [
+          649,
+          41
+        ]
+      },
+      {
+        "id": "60c36d29-05a7-4816-be7c-00940ce53cd2",
+        "position": [
+          651,
+          359
+        ]
+      }
+    ],
+    "connections": [
+      {
+        "id": "9d00e54e-26c1-46eb-9c6e-df2daadd9c73",
+        "source_id": "7cc19591-08ce-4aa3-a918-981516175d76",
+        "target_id": "f93e321a-4262-4c80-acc4-cd0319561f8e"
+      },
+      {
+        "id": "204938b9-458a-4e03-9155-2cc3b084ff83",
+        "source_id": "f93e321a-4262-4c80-acc4-cd0319561f8e",
+        "target_id": "4f537c23-fe9a-45cb-a57d-e70c22f1a62f"
+      },
+      {
+        "id": "3ae4cfce-6cdf-49ff-b9df-abd71c2305d8",
+        "source_id": "4f537c23-fe9a-45cb-a57d-e70c22f1a62f",
+        "target_id": "59673c7b-013f-47a8-aa60-ea4cb0b28024"
+      },
+      {
+        "id": "ec2d3735-9806-4b9b-8dce-48bcdf51ef73",
+        "source_id": "4f537c23-fe9a-45cb-a57d-e70c22f1a62f",
+        "target_id": "e95cc94d-fee7-449c-af40-ba9847aaaf51"
+      },
+      {
+        "id": "ad1590f9-6eb4-4da6-a625-0fb81176ac3f",
+        "source_id": "59673c7b-013f-47a8-aa60-ea4cb0b28024",
+        "target_id": "60c36d29-05a7-4816-be7c-00940ce53cd2"
+      },
+      {
+        "id": "9f1a5df5-6055-408a-ad7f-7d330c75f1b7",
+        "source_id": "e95cc94d-fee7-449c-af40-ba9847aaaf51",
+        "target_id": "60c36d29-05a7-4816-be7c-00940ce53cd2"
+      },
+      {
+        "id": "f3ce51f0-54f1-4c34-9773-e41bcbbc9c2b",
+        "source_id": "60c36d29-05a7-4816-be7c-00940ce53cd2",
+        "target_id": "11719143-cbff-4cd4-bf0c-c6bf964e65a1"
+      },
+      {
+        "id": "9a7c81fe-2ef1-4ba1-89bf-b31f879235fc",
+        "source_id": "11719143-cbff-4cd4-bf0c-c6bf964e65a1",
+        "target_id": "7cc19591-08ce-4aa3-a918-981516175d76"
+      }
+    ]
+  },
+  "text_annotations": [
     {
-      "page_number": 1,
-      "image_file": "images/page1.png",
-      "bounding_boxes": [
+      "id": "6d04c40d-8b4e-42f1-9afc-e85fba2e3e3f",
+      "bbox": [
+        271,
+        88,
+        434,
+        148
+      ],
+      "raw_text": "R_1 = 20\\Omega",
+      "is_ignored": false,
+      "linked_to": "f93e321a-4262-4c80-acc4-cd0319561f8e",
+      "values": [
         {
-          "id": "5ef4c2be-5336-40c0-ae2a-970f9c736d2f",
-          "order": 1,
-          "bbox": [
-            97,
-            86,
-            167,
-            110
-          ],
-          "type": "heading",
-          "content": "Problem 1",
-          "subtype": "section"
-        },
-        {
-          "id": "f2ecc985-7ea5-4a5a-a306-85810b10177a",
-          "order": 2,
-          "bbox": [
-            98,
-            110,
-            141,
-            129
-          ],
-          "type": "paragraph",
-          "content": "Proof:"
-        },
-        {
-          "id": "e946d591-207d-4258-8bf8-3167e86f0cd8",
-          "order": 3,
-          "bbox": [
-            99,
-            131,
-            530,
-            215
-          ],
-          "type": "list",
-          "content": [
-            "Assume there exists an $a \\in \\mathbb{R}$ such that $a \\leq b$ for all $b \\in \\mathbb{R}$.",
-            "$a - 1 < a$, so it is not true that $a \\leq b$ for all $b \\in \\mathbb{R}$. Therefore, the assumption is false."
-          ],
-          "subtype": "bulleted"
-        },
-        {
-          "id": "af217edb-4017-4c98-9df5-09a3d8b27472",
-          "order": 4,
-          "bbox": [
-            100,
-            237,
-            174,
-            257
-          ],
-          "type": "heading",
-          "content": "Problem 2",
-          "subtype": "section"
-        },
-        {
-          "id": "ed681ddc-c00b-44ec-8a73-9967ad0b68f6",
-          "order": 5,
-          "bbox": [
-            103,
-            259,
-            122,
-            276
-          ],
-          "type": "heading",
-          "content": "a)",
-          "subtype": "subsection"
-        },
-        {
-          "id": "7ff61c26-d41b-4cfa-8c25-b7dec8c76f3a",
-          "order": 6,
-          "bbox": [
-            130,
-            259,
-            239,
-            278
-          ],
-          "type": "display_math",
-          "content": "$$2 + 4 = 6$$"
-        },
-        {
-          "id": "74c1b4de-3f2d-4257-b22f-379cba3f2efb",
-          "order": 7,
-          "bbox": [
-            103,
-            281,
-            122,
-            298
-          ],
-          "type": "heading",
-          "content": "b)",
-          "subtype": "subsection"
-        },
-        {
-          "id": "5f41dd69-88bb-49b1-bfc9-129fe91a2fc3",
-          "order": 8,
-          "bbox": [
-            132,
-            280,
-            265,
-            303
-          ],
-          "type": "display_math",
-          "content": "$$40 % 3 = 1$$"
-        }
-      ]
-    },
-    {
-      "page_number": 2,
-      "image_file": "images/page2.png",
-      "bounding_boxes": [
-        {
-          "id": "35194f5d-72d5-4871-aa7d-2ee0d85fb19a",
-          "order": 1,
-          "bbox": [
-            63,
-            68,
-            138,
-            96
-          ],
-          "type": "heading",
-          "content": "Problem 3",
-          "subtype": "section"
-        },
-        {
-          "id": "4f30a0c0-5a0d-4792-8bfc-baac8029ea2a",
-          "order": 2,
-          "bbox": [
-            67,
-            96,
-            86,
-            112
-          ],
-          "type": "heading",
-          "content": "a)",
-          "subtype": "subsection"
-        },
-        {
-          "id": "aa4f1dd4-0926-4495-b3c6-b6a3bbaaf247",
-          "order": 3,
-          "bbox": [
-            109,
-            98,
-            125,
-            115
-          ],
-          "type": "heading",
-          "content": "i)",
-          "subtype": "subsubsection"
-        },
-        {
-          "id": "0c0a3abb-7bc1-4278-8875-8e26914af6bf",
-          "order": 4,
-          "bbox": [
-            145,
-            76,
-            558,
-            157
-          ],
-          "type": "paragraph",
-          "content": "The set of states is $\\mathbb{N} \\times \\mathbb{N} = {(h, t) | h, t \\in \\mathbb{N}}$, where $(h, t)$ represents the state with $h$ heads and $t$ tails."
-        },
-        {
-          "id": "725b006a-62e5-4a9c-84a9-6bcc9a21fb14",
-          "order": 5,
-          "bbox": [
-            106,
-            160,
-            125,
-            179
-          ],
-          "type": "heading",
-          "content": "ii)",
-          "subtype": "subsubsection"
-        },
-        {
-          "id": "9be508c5-a6d9-43ed-87f4-8d49c129da5e",
-          "order": 6,
-          "bbox": [
-            139,
-            153,
-            357,
-            180
-          ],
-          "type": "paragraph",
-          "content": "The start state is $(98, 4)$"
-        },
-        {
-          "id": "3a5e897a-cbb1-4e54-babf-f924c9ec3288",
-          "order": 7,
-          "bbox": [
-            67,
-            184,
-            83,
-            201
-          ],
-          "type": "heading",
-          "content": "b)",
-          "subtype": "subsection"
-        },
-        {
-          "id": "2fa8f140-f4cf-43dd-b252-d53bfa8b4834",
-          "order": 8,
-          "bbox": [
-            97,
-            183,
-            146,
-            205
-          ],
-          "type": "paragraph",
-          "content": "Proof:"
-        },
-        {
-          "id": "6566016a-1558-43ae-ad80-0fd0a713b82c",
-          "order": 9,
-          "bbox": [
-            94,
-            198,
-            306,
-            244
-          ],
-          "type": "list",
-          "content": [
-            "$P(n) \\coloneq a_n \\leq c \\cdot 2^n",
-            "This is a sample proof!"
-          ],
-          "subtype": "bulleted"
+          "value": "20",
+          "unit_prefix": "-",
+          "unit_suffix": "Ohm"
         }
       ]
     }

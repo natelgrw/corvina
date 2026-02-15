@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { Annotation } from '../types';
 import { TechDropdown } from './TechDropdown';
-import { DOCUMENT_TYPES, DOMAINS, BOUNDING_BOX_TYPES, HEADER_SUBTYPES, LIST_SUBTYPES } from '../constants';
+import { ANNOTATION_CLASSES } from '../constants';
 
 interface AnnotationSidebarProps {
     annotations: Annotation[];
     isDrawing: boolean;
+    toolMode: 'box' | 'line' | 'node' | 'connection';
+    setToolMode: (mode: 'box' | 'line' | 'node' | 'connection') => void;
     onToggleDrawing: () => void;
     onUpdateAnnotation: (id: string, label: string) => void;
     onDeleteAnnotation: (id: string) => void;
@@ -17,73 +19,11 @@ interface AnnotationSidebarProps {
     actionLabel?: string;
 }
 
-// Helper to manage input state so it doesn't jump around or lose focus weirdly
-const OrderInput = ({ index, total, onMove }: { index: number, total: number, onMove: (i: number) => void }) => {
-    const [val, setVal] = React.useState((index + 1).toString());
-
-    // Sync local state when index changes (e.g. after reorder)
-    React.useEffect(() => {
-        setVal((index + 1).toString());
-    }, [index]);
-
-    const commit = React.useCallback((valueStr: string) => {
-        const num = parseInt(valueStr);
-        if (!isNaN(num) && num >= 1 && num <= total) {
-            if (num !== index + 1) {
-                onMove(num - 1);
-            }
-        } else {
-            // Revert if invalid
-            setVal((index + 1).toString());
-        }
-    }, [index, total, onMove]);
-
-
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newVal = e.target.value;
-        // Allow empty string to let user delete and retype
-        if (newVal === '') {
-            setVal('');
-            return;
-        }
-
-        const num = parseInt(newVal);
-        // strict validation: blocking invalid inputs immediately
-        if (!isNaN(num) && num >= 1 && num <= total) {
-            setVal(newVal);
-        }
-    };
-
-    return (
-        <input
-            type="number"
-            value={val}
-            onChange={handleChange}
-            onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                    e.currentTarget.blur(); // Blur triggers onBlur commit immediately
-                }
-            }}
-            onBlur={() => commit(val)}
-            style={{
-                width: '40px',
-                padding: '2px',
-                fontSize: '0.8rem',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                border: '1px solid #ccc',
-                background: '#f9f9f9',
-                outline: 'none',
-                fontFamily: 'monospace'
-            }}
-        />
-    );
-};
-
 export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
     annotations,
     isDrawing,
+    toolMode,
+    setToolMode,
     onToggleDrawing,
     onUpdateAnnotation,
     onDeleteAnnotation,
@@ -98,13 +38,53 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
         onUpdateAnnotation(id, newLabel);
     };
 
-    const handleMove = (index: number, newIndexStr: string) => {
-        const newIndex = parseInt(newIndexStr, 10);
-        if (!isNaN(newIndex)) {
-            // adjust for 1-based index input
-            onMoveAnnotation(index, newIndex - 1);
+    // Helper to get type-specific index (Global Source of Truth)
+    const getTypeIndex = (ann: Annotation) => {
+        const typeSiblings = annotations.filter(a => a.type === ann.type);
+        return typeSiblings.findIndex(a => a.id === ann.id) + 1;
+    };
+
+    // Filter displayed annotations based on toolMode
+    const filteredAnnotations = useMemo(() => {
+        if (toolMode === 'node') {
+            return annotations.filter(a => a.type === 'node');
+        } else if (toolMode === 'connection') {
+            return annotations.filter(a => a.type === 'connection' || a.type === 'line');
+        } else {
+            // Default to Component (Box) view
+            return annotations.filter(a => a.type === 'box');
         }
-    }
+    }, [annotations, toolMode]);
+
+    const getAnnotationDetails = (ann: Annotation) => {
+        const typeIndex = getTypeIndex(ann);
+
+        if (ann.type === 'node') {
+            return `Node ${typeIndex}`;
+        }
+        if (ann.type === 'box') {
+            const x1 = Math.round(ann.x);
+            const y1 = Math.round(ann.y);
+            const x2 = Math.round(ann.x + ann.width);
+            const y2 = Math.round(ann.y + ann.height);
+            return `[${x1}, ${y1}, ${x2}, ${y2}]`;
+        }
+        if (ann.type === 'connection' && ann.sourceId && ann.targetId) {
+            const sIndex = annotations.findIndex(a => a.id === ann.sourceId);
+            const tIndex = annotations.findIndex(a => a.id === ann.targetId);
+
+            if (sIndex === -1 || tIndex === -1) return "LINK (Invalid)";
+
+            const source = annotations[sIndex];
+            const target = annotations[tIndex];
+
+            const sTypeIndex = getTypeIndex(source);
+            const tTypeIndex = getTypeIndex(target);
+
+            return `LINK`;
+        }
+        return `[${Math.round(ann.x)}, ${Math.round(ann.y)}]`;
+    };
 
     return (
         <div style={{
@@ -112,86 +92,163 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
             display: 'flex',
             flexDirection: 'column',
             backgroundColor: '#FAFAFA',
-            // borderRight removed
             padding: '1rem',
             fontFamily: '"IBM Plex Mono", monospace'
         }}>
             {/* Header */}
             <div style={{
-                marginBottom: '1.5rem',
+                marginBottom: '1rem',
                 borderBottom: '2px solid black',
                 paddingBottom: '0.5rem',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center'
             }}>
-                <span style={{ fontWeight: 600, letterSpacing: '-0.5px' }}>BOUNDING BOXES</span>
-                <span style={{ fontSize: '0.8rem', color: '#666' }}>{annotations.length}</span>
+                <span style={{ fontWeight: 600, letterSpacing: '-0.5px' }}>ANNOTATIONS</span>
+                <span style={{ fontSize: '0.8rem', color: '#666' }}>
+                    {filteredAnnotations.length}
+                </span>
             </div>
 
-            {/* List */}
-            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {annotations.map((ann, index) => (
-                    <div
-                        key={ann.id}
-                        onMouseEnter={() => onHoverAnnotation(ann.id)}
-                        onMouseLeave={() => onHoverAnnotation(null)}
-                        style={{
-                            padding: '0.75rem',
-                            border: hoveredId === ann.id ? '1px solid black' : '1px solid #eee',
-                            backgroundColor: hoveredId === ann.id ? 'white' : 'transparent',
-                            transition: 'all 0.2s ease',
-                            position: 'relative'
-                        }}
-                    >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.75rem', color: '#888' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                <span>#</span>
-                                <input
-                                    type="number"
-                                    defaultValue={index + 1}
-                                    className="tech-input-minimal"
-                                    onBlur={(e) => handleMove(index, e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            handleMove(index, e.currentTarget.value);
-                                            e.currentTarget.blur();
-                                        }
-                                    }}
-                                    style={{
-                                        width: '30px',
-                                        border: 'none',
-                                        background: 'transparent',
-                                        fontFamily: 'inherit',
-                                        fontSize: 'inherit',
-                                        color: 'inherit',
-                                        padding: 0,
-                                        fontWeight: 'bold',
-                                        textAlign: 'center'
-                                    }}
-                                />
-                            </div>
-                            <span>Pg {ann.page} [{Math.round(ann.x)}, {Math.round(ann.y)}, {Math.round(ann.x + ann.width)}, {Math.round(ann.y + ann.height)}]</span>
-                            <button
-                                className="delete-annotation-btn"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onDeleteAnnotation(ann.id);
-                                }}
-                            >
-                                ×
-                            </button>
-                        </div>
-                        <TechDropdown
-                            value={ann.label}
-                            onChange={(val) => handleLabelChange(ann.id, val)}
-                            options={BOUNDING_BOX_TYPES}
-                            placeholder="SELECT TYPE"
-                        />
-                    </div>
-                ))}
+            {/* Tool Switcher (Tabs) */}
+            <div style={{ display: 'flex', marginBottom: '1rem', border: '1px solid #ccc', borderRadius: '4px', overflow: 'hidden' }}>
+                <button
+                    onClick={() => setToolMode('box')}
+                    style={{
+                        flex: 1,
+                        padding: '0.4rem',
+                        border: 'none',
+                        background: toolMode === 'box' ? 'black' : 'white',
+                        color: toolMode === 'box' ? 'white' : 'black',
+                        cursor: 'pointer',
+                        fontWeight: 600,
+                        fontSize: '0.65rem',
+                        borderRight: '1px solid #ccc'
+                    }}
+                >
+                    COMPONENTS
+                </button>
+                <button
+                    onClick={() => setToolMode('node')}
+                    style={{
+                        flex: 1,
+                        padding: '0.4rem',
+                        border: 'none',
+                        background: toolMode === 'node' ? 'black' : 'white',
+                        color: toolMode === 'node' ? 'white' : 'black',
+                        cursor: 'pointer',
+                        fontWeight: 600,
+                        fontSize: '0.65rem',
+                        borderRight: '1px solid #ccc'
+                    }}
+                >
+                    NODES
+                </button>
+                <button
+                    onClick={() => setToolMode('connection')}
+                    style={{
+                        flex: 1,
+                        padding: '0.4rem',
+                        border: 'none',
+                        background: toolMode === 'connection' ? 'black' : 'white',
+                        color: toolMode === 'connection' ? 'white' : 'black',
+                        cursor: 'pointer',
+                        fontWeight: 600,
+                        fontSize: '0.65rem'
+                    }}
+                >
+                    LINKS
+                </button>
+            </div>
 
-                {annotations.length === 0 && (
+            {/* List (Filtered) */}
+            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {filteredAnnotations.map((ann) => {
+                    const isSimple = ann.type === 'node' || ann.type === 'connection' || ann.type === 'line';
+                    const typeIndex = getTypeIndex(ann);
+
+                    // Resolution for connections body text
+                    let connectionLabel = 'LINK';
+                    if (ann.type === 'connection' && ann.sourceId && ann.targetId) {
+                        const sIndex = annotations.findIndex(a => a.id === ann.sourceId);
+                        const tIndex = annotations.findIndex(a => a.id === ann.targetId);
+
+                        if (sIndex !== -1 && tIndex !== -1) {
+                            const source = annotations[sIndex];
+                            const target = annotations[tIndex];
+                            const sTypeIndex = getTypeIndex(source);
+                            const tTypeIndex = getTypeIndex(target);
+
+                            const sName = source.type === 'node' ? `N${sTypeIndex}` : `C${sTypeIndex}`;
+                            const tName = target.type === 'node' ? `N${tTypeIndex}` : `C${tTypeIndex}`;
+                            connectionLabel = `${sName} -> ${tName}`;
+                        }
+                    }
+
+                    return (
+                        <div
+                            key={ann.id}
+                            onMouseEnter={() => onHoverAnnotation(ann.id)}
+                            onMouseLeave={() => onHoverAnnotation(null)}
+                            style={{
+                                padding: '0.75rem',
+                                border: hoveredId === ann.id ? '1px solid black' : '1px solid #eee',
+                                backgroundColor: hoveredId === ann.id ? 'white' : 'transparent',
+                                transition: 'all 0.2s ease',
+                                position: 'relative'
+                            }}
+                        >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.75rem', color: '#888' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    {/* Index (Static) */}
+                                    <span style={{
+                                        minWidth: '25px',
+                                        fontWeight: 'bold',
+                                        color: 'black',
+                                        fontSize: '0.8rem'
+                                    }}>
+                                        {ann.type === 'node' ? `N${typeIndex}` : (ann.type === 'connection' ? `L${typeIndex}` : `C${typeIndex}`)}
+                                    </span>
+                                </div>
+                                <span>
+                                    {getAnnotationDetails(ann)}
+                                </span>
+                                <button
+                                    className="delete-annotation-btn"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onDeleteAnnotation(ann.id);
+                                    }}
+                                >
+                                    ×
+                                </button>
+                            </div>
+
+                            {isSimple ? (
+                                <div style={{
+                                    padding: '0.5rem',
+                                    background: '#eee',
+                                    color: '#666',
+                                    fontSize: '0.8rem',
+                                    textAlign: 'center',
+                                    fontStyle: 'italic',
+                                    fontWeight: 500
+                                }}>
+                                    {ann.type === 'node' ? `Node ${typeIndex}` : (ann.type === 'connection' ? connectionLabel : 'LEGACY LINE')}
+                                </div>
+                            ) : (
+                                <TechDropdown
+                                    value={ann.label}
+                                    onChange={(val) => handleLabelChange(ann.id, val)}
+                                    options={ANNOTATION_CLASSES}
+                                    placeholder="SELECT COMPONENT"
+                                />
+                            )}
+                        </div>
+                    )
+                })}
+
+                {filteredAnnotations.length === 0 && (
                     <div style={{
                         padding: '2rem',
                         textAlign: 'center',
@@ -200,7 +257,7 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
                         border: '1px dashed #ddd',
                         borderRadius: '4px'
                     }}>
-                        NO ANNOTATIONS
+                        NO {toolMode === 'box' ? 'COMPONENTS' : (toolMode === 'connection' ? 'LINKS' : 'NODES')}
                     </div>
                 )}
             </div>
@@ -213,7 +270,7 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
                     style={{ flex: 1 }}
                     disabled={isSubmitting}
                 >
-                    {isDrawing ? 'CANCEL DRAW' : '+ ADD BOX'}
+                    {isDrawing ? 'CANCEL DRAW' : (toolMode === 'connection' ? '+ START LINKING' : (toolMode === 'node' ? '+ ADD NODE' : '+ ADD COMPONENT'))}
                 </button>
             </div>
 
@@ -239,7 +296,6 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
                 <span>{actionLabel}</span>
                 {isSubmitting && (
                     <>
-                        {/* Top Left Pixel */}
                         <div style={{
                             position: 'absolute',
                             top: '4px',
@@ -250,7 +306,6 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
                             animation: 'blink 1s infinite',
                             animationDelay: '0ms'
                         }} />
-                        {/* Bottom Right Pixel */}
                         <div style={{
                             position: 'absolute',
                             bottom: '4px',
@@ -267,4 +322,3 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
         </div>
     );
 };
-

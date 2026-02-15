@@ -1,108 +1,93 @@
 {
-  "document_id": "sample_1",
-  "pdf_file": "sample_1.pdf",
-  "num_pages": 1,
+  "image_file": "sample_1.png",
   "classification": {
-    "type": "homework",
-    "domain": "math_phys_cs"
+    "drawing_type": "handwritten",
+    "source": "notebook"
   },
-  "pages": [
+  "graph": {
+    "components": [
+      {
+        "id": "ecb4f203-85e4-4b37-a980-0341c69bfbba",
+        "label": "ideal_voltage_source",
+        "bbox": [
+          647,
+          1254,
+          1110,
+          1915
+        ]
+      },
+      {
+        "id": "c757a438-3402-4171-92a2-a941be7fff8a",
+        "label": "resistor",
+        "bbox": [
+          1331,
+          957,
+          1802,
+          1208
+        ]
+      },
+      {
+        "id": "b51eb22c-304b-44c0-a391-0ef260252ebe",
+        "label": "resistor",
+        "bbox": [
+          2136,
+          1261,
+          2349,
+          1710
+        ]
+      },
+      {
+        "id": "7a65b7cb-fab2-4204-a477-7f9eb084f09a",
+        "label": "resistor",
+        "bbox": [
+          1353,
+          1922,
+          1802,
+          2188
+        ]
+      }
+    ],
+    "nodes": [],
+    "connections": [
+      {
+        "id": "57d3a92c-ae9a-41ff-81b3-9fe6f54da903",
+        "source_id": "ecb4f203-85e4-4b37-a980-0341c69bfbba",
+        "target_id": "c757a438-3402-4171-92a2-a941be7fff8a"
+      },
+      {
+        "id": "25bcf8f5-e969-4f0b-a53e-8746ef66efd4",
+        "source_id": "c757a438-3402-4171-92a2-a941be7fff8a",
+        "target_id": "b51eb22c-304b-44c0-a391-0ef260252ebe"
+      },
+      {
+        "id": "05d4c00b-9ef3-4bae-80d5-1b4b74c58b68",
+        "source_id": "b51eb22c-304b-44c0-a391-0ef260252ebe",
+        "target_id": "7a65b7cb-fab2-4204-a477-7f9eb084f09a"
+      },
+      {
+        "id": "ee2ca18b-d64e-4d33-bccd-69d29faebd22",
+        "source_id": "7a65b7cb-fab2-4204-a477-7f9eb084f09a",
+        "target_id": "ecb4f203-85e4-4b37-a980-0341c69bfbba"
+      }
+    ]
+  },
+  "text_annotations": [
     {
-      "page_number": 1,
-      "image_file": "images/page1.png",
-      "bounding_boxes": [
+      "id": "e9060ac7-9861-4d15-a02c-ffc5b09ec5e7",
+      "bbox": [
+        399,
+        1525,
+        631,
+        1738
+      ],
+      "raw_text": "9 V",
+      "is_ignored": false,
+      "linked_to": "ecb4f203-85e4-4b37-a980-0341c69bfbba",
+      "values": [
         {
-          "id": "3b6a4c5d-7672-4d8c-82a7-0281ed18aed3",
-          "order": 1,
-          "bbox": [
-            7,
-            7,
-            75,
-            32
-          ],
-          "type": "heading",
-          "content": "Problem 1",
-          "subtype": "section"
-        },
-        {
-          "id": "a8e51cf5-ad9b-495e-8e5e-3915abd5e38f",
-          "order": 2,
-          "bbox": [
-            11,
-            36,
-            29,
-            53
-          ],
-          "type": "heading",
-          "content": "a)",
-          "subtype": "subsection"
-        },
-        {
-          "id": "21950c7e-12f5-4776-8661-3ca774c9f3c8",
-          "order": 3,
-          "bbox": [
-            38,
-            36,
-            84,
-            59
-          ],
-          "type": "paragraph",
-          "content": "Proof:"
-        },
-        {
-          "id": "481f1961-a0a7-4434-bc4b-f44430570dee",
-          "order": 4,
-          "bbox": [
-            37,
-            61,
-            575,
-            174
-          ],
-          "type": "list",
-          "content": [
-            "Let $a = 0$ AND arbitrary $b \\in \\mathbb{N}$",
-            "$0 \\in \\mathbb{N}$, so $a \\in \\mathbb{N}$",
-            "By definition of natural numbers, $0$ is the smallest natural number. Thus, the statement $0 \\leq b$ holds true, since arbitrary $b$ can only be $\\geq 0$",
-            "Thus, $a \\leq b$ when $a = 0$, satisfying the condition $\\square$"
-          ],
-          "subtype": "bulleted"
-        },
-        {
-          "id": "a15f2ff6-9410-482e-9690-4822f0ae0338",
-          "order": 5,
-          "bbox": [
-            11,
-            176,
-            32,
-            195
-          ],
-          "type": "heading",
-          "content": "b)",
-          "subtype": "subsection"
-        },
-        {
-          "id": "1ca177e1-d873-4e00-bf15-8e51c32436a1",
-          "order": 6,
-          "bbox": [
-            46,
-            177,
-            491,
-            209
-          ],
-          "type": "display_math",
-          "content": "$$x^2 - 2x - 8 = 0, (x-4)(x+2) = 0, x = 4, -2$$"
-        },
-        {
-          "id": "e39110c4-1de9-4884-ad34-66fde971b445",
-          "order": 7,
-          "bbox": [
-            47,
-            213,
-            325,
-            246
-          ],
-          "type": "paragraph",
-          "content": "Roots of Quadratic Equation: $4, -2$"
+          "value": "9",
+          "unit_prefix": "-",
+          "unit_suffix": "V"
         }
       ]
     }

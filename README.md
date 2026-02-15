@@ -1,74 +1,82 @@
-# TeX Transformer: Data Pipeline for LaTeX Model Training
+# CORVINA
 
-A document processing pipeline that extracts PDF pages, classifies them using Mistral AI's Pixtral VLM, and provides a sleek web interface for manual annotation and dataset curation.
+A circuit annotation pipeline for building AI training datasets. Provides a sleek web interface for labeling circuit components, nodes, and connections on hand-drawn or printed schematics.
 
-Current Version: **0.5.1**
+Current Version: **1.0.0**
 
-## 💬 Features
+## 📟 Features
 
-TeX Transformer is under active development. It currently supports the following features:
+CORVINA is a purpose-built tool for curating circuit diagram datasets. It currently supports the following features:
 
-- **Web Interface**: Modern UI for uploading PDFs, drawing bounding boxes, and typing accurate transcriptions.
-- **Backend API**: Flask server handling PDF extraction, temporary storage, and dataset management.
-- **AI Classification**: Automatic document classification using Mistral AI's Pixtral VLM.
+- **Web Interface**: Modern UI for uploading circuit images, drawing component bounding boxes, placing nodes, defining connections, and transcribing associated text.
+- **Backend API**: High-performance Go server handling image storage and structured dataset generation with zero external dependencies.
+- **Structured Output**: Each annotated image produces a clean JSON file separating the circuit graph (components, nodes, connections) from text annotations with values and units.
 
 ![Interface Preview](./frontend/public/interface.png)
 
-Each document is first sorted into 1 of 6 document types:
+## 📋 Annotation Pipeline
 
-- `homework`: Problems, exercises, assignments
-- `notes`: Lecture notes, study summaries
-- `assessment`: Exams, tests, quizzes
-- `report`: Formal reports with structured sections
-- `writing`: Essays, compositions
-- `diagram`: Visual content (charts, graphs)
+The annotation workflow is split into two phases:
 
-Then sorted into 1 of 4 academic domains:
+**Phase 1 — Graph Annotation.** The user draws bounding boxes around circuit components, places nodes at junction points, and defines connections between them. Each element is classified:
 
-- `math_phys_cs`: Mathematics, Physics, Computer Science
-- `bio_chem_env`: Biology, Chemistry, Environmental Science
-- `econ_business`: Economics, Business
-- `humanities`: Languages, History, Social Sciences
+- `component`: Circuit elements like resistors, capacitors, voltage sources — annotated with a bounding box and label
+- `node`: Junction points in the circuit — annotated with a position
+- `connection`: Wires linking components and nodes — defined by source and target IDs
 
-The web interface allows for precise bounding box annotation of document elements, classified into the following types:
+**Phase 2 — Text Transcription.** The user identifies and transcribes text annotations on the circuit image, associating each with its corresponding component or node:
 
-- `heading`: Structural headings (Chapter, Section, Subsection)
-- `paragraph`: Standard blocks of text
-- `list`: Bulleted or numbered lists
-- `display_math`: Centered or standalone mathematical equations
-- `table`: Tabular data structures
-- `figure`: Images, diagrams, charts, and plots
-- `code`: Source code blocks or algorithms
-- `header_footer`: Page headers, footers, and page numbers
+- `raw_text`: The literal text visible on the image (e.g., "10kΩ")
+- `label_name`: A user-defined label for the component (e.g., "R1")
+- `values`: Structured data with value, unit prefix, and unit suffix (e.g., `10`, `k`, `Ω`)
 
-The user is then directed to transcribe the content of each bounding box and provide additional subtype information before pressing submit. The final output is a dataset entry with the input PDF, extracted `.png` images for every page, and a comprehensive `.json` transcribing labeling.
+The final output is a dataset entry with the original `.png` image and a comprehensive `.json` file containing the circuit graph and all text annotations.
 
 ![Subinterface Preview](./frontend/public/subinterface.png)
 
-## 🐋 Docker Setup
+### Dataset Format
 
-### 1. Set up your API key
+Each submission creates a directory in `dataset/` named after the image:
 
-Create a `.env` file in the `backend/` directory:
-
-```bash
-echo "MISTRAL_API_KEY=your_mistral_api_key" > backend/.env
+```
+dataset/
+└── circuit_01/
+    ├── circuit_01.png       # Original image
+    └── circuit_01.json      # Structured annotation data
 ```
 
-Or get your API key at: https://console.mistral.ai/
+The JSON file contains:
 
-### 2. Run the application
+```json
+{
+  "image_file": "circuit_01.png",
+  "classification": { "drawing_type": "handwritten", "source": "notebook" },
+  "graph": {
+    "components": [{ "id": "...", "label": "resistor", "bbox": [x1, y1, x2, y2] }],
+    "nodes": [{ "id": "...", "position": [x, y] }],
+    "connections": [{ "id": "...", "source_id": "...", "target_id": "..." }]
+  },
+  "text_annotations": [
+    { "id": "...", "raw_text": "10k", "linked_to": "...", "label_name": "R1",
+      "values": [{ "value": "10", "unit_prefix": "k", "unit_suffix": "Ohm" }] }
+  ]
+}
+```
+
+## 🐋 Docker Setup
+
+### 1. Run the application
 
 Start the full stack (frontend + backend) using Docker Compose:
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
-### 3. Access the Interface
+### 2. Access the Interface
 
 Open your browser and navigate to:
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:5001
 
-The application handles PDF uploads, page extraction, and annotation submission through the web interface.
+Upload a `.png` circuit image, annotate components and connections, transcribe text, and submit to generate a structured dataset entry.

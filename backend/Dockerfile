@@ -1,29 +1,22 @@
-# Start from python base image
-FROM python:3.10-slim
+# ---------- Build ----------
+FROM golang:1.22-alpine AS builder
+
+WORKDIR /build
+
+COPY go.mod .
+COPY main.go .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o server .
+
+# ---------- Run ----------
+FROM alpine:3.19
 
 WORKDIR /app
 
-# Install system dependencies (poppler for pdf2image, opencv libs)
-RUN apt-get update && apt-get install -y \
-    poppler-utils \
-    libgl1 \
-    libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
+COPY --from=builder /build/server .
 
-# Install python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy source code
-COPY extractor/ extractor/
-COPY classifier/ classifier/
-COPY global_vars.py .
-COPY .env .
-COPY server.py .
-
-# Create dataset dir
-RUN mkdir dataset
+RUN mkdir -p dataset
 
 EXPOSE 5001
 
-CMD ["python", "server.py"]
+CMD ["./server"]

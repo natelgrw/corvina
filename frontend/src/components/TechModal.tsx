@@ -127,3 +127,62 @@ export const TechModal: React.FC<TechModalProps> = ({
         </div>
     );
 };
+
+interface TechDropdownProps {
+    label: string;
+    value: string;
+    options: { label: string; value: string }[];
+    onChange: (value: string) => void;
+    placeholder?: string;
+}
+
+export const TechDropdown: React.FC<TechDropdownProps> = ({
+    label,
+    value,
+    options,
+    onChange,
+    placeholder = '-'
+}) => {
+    return (
+        <div>
+            <label style={{ fontSize: '0.65rem', fontWeight: 600, display: 'block', marginBottom: '2px', opacity: 0.6 }}>
+                {label}
+            </label>
+            <div style={{ position: 'relative' }}>
+                <select
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                    style={{
+                        width: '100%',
+                        appearance: 'none',
+                        background: 'white',
+                        border: '1px solid #e2e8f0',
+                        padding: '0.4rem 0.5rem',
+                        fontSize: '0.8rem',
+                        fontFamily: 'inherit',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    {options.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                        </option>
+                    ))}
+                </select>
+                {/* Custom Arrow */}
+                <div style={{
+                    position: 'absolute',
+                    right: '0.5rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    pointerEvents: 'none',
+                    fontSize: '0.6rem',
+                    opacity: 0.5
+                }}>
+                    ▼
+                </div>
+            </div>
+        </div>
+    );
+};
