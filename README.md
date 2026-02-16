@@ -12,7 +12,7 @@ CORVINA is a purpose-built tool for curating circuit diagram datasets. It curren
 - **Backend API**: High-performance Go server handling image storage and structured dataset generation with zero external dependencies.
 - **Structured Output**: Each annotated image produces a clean JSON file separating the circuit graph (components, nodes, connections) from text annotations with values and units.
 
-![Interface Preview](./frontend/public/interface.png)
+![Interface Preview](./frontend/public/corvina_interface.png)
 
 ## 📋 Annotation Pipeline
 
