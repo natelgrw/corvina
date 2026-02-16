@@ -9,8 +9,8 @@ Current Version: **0.1.1**
 CORVINA is a purpose-built tool for curating circuit diagram datasets. It currently supports the following features:
 
 - **Web Interface**: Modern UI for uploading circuit images, drawing component bounding boxes, placing nodes, defining connections, and transcribing associated text.
-- **Backend API**: High-performance Go server handling image storage and structured dataset generation with zero external dependencies.
-- **Structured Output**: Each annotated image produces a clean JSON file separating the circuit graph (components, nodes, connections) from text annotations with values and units.
+- **Backend API**: High-performance Go server using **PostgreSQL** for structured data persistence and local filesystem for image storage.
+- **Structured Output**: Annotations are stored in a relational database, with API endpoints providing clean JSON exports separating the circuit graph from text annotations.
 
 ![Interface Preview](./frontend/public/corvina_interface.png)
 
@@ -70,6 +70,8 @@ Start the full stack (frontend + backend) using Docker Compose:
 ```bash
 docker compose up --build
 ```
+
+This starts the **Frontend** (Vite), **Backend** (Go), and **Database** (PostgreSQL) services.
 
 ### 2. Access the Interface
 
