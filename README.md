@@ -9,10 +9,10 @@ Current Version: **0.1.1**
 CORVINA is a purpose-built tool for curating circuit diagram datasets. It currently supports the following features:
 
 - **Web Interface**: Modern UI for uploading circuit images, drawing component bounding boxes, placing nodes, defining connections, and transcribing associated text.
-- **Backend API**: High-performance Go server using **PostgreSQL** for structured data persistence and local filesystem for image storage.
+- **Backend API**: High-performance Go server using PostgreSQL for structured data persistence and local filesystem for image storage.
 - **Structured Output**: Annotations are stored in a relational database, with API endpoints providing clean JSON exports separating the circuit graph from text annotations.
 
-![Interface Preview](./frontend/public/corvina_interface.png)
+![Interface Preview](./frontend/public/corvina_annotation.png)
 
 ## 📋 Annotation Pipeline
 
