@@ -1,11 +1,29 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: corvina_db
+    environment:
+      POSTGRES_USER: corvina
+      POSTGRES_PASSWORD: corvina
+      POSTGRES_DB: corvina
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    restart: unless-stopped
+
   backend:
     build: ./backend
     container_name: corvina_backend
     ports:
       - "5001:5001"
+    environment:
+      DATABASE_URL: postgres://corvina:corvina@postgres:5432/corvina?sslmode=disable
     volumes:
       - ./dataset:/app/dataset
+    depends_on:
+      - postgres
     restart: unless-stopped
 
   frontend:
@@ -17,3 +35,6 @@ services:
       - ./frontend:/app
       - /app/node_modules
     restart: unless-stopped
+
+volumes:
+  pgdata:

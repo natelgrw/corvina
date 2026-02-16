@@ -13,6 +13,7 @@ interface TranscriptionSidebarProps {
     onToggleDrawing: () => void;
     linkingTextId: string | null;
     setLinkingTextId: (id: string | null) => void;
+    onBack?: () => void;
 }
 
 const SI_PREFIXES = [
@@ -206,7 +207,8 @@ export const TranscriptionSidebar: React.FC<TranscriptionSidebarProps> = ({
     isDrawing,
     onToggleDrawing,
     linkingTextId,
-    setLinkingTextId
+    setLinkingTextId,
+    onBack
 }) => {
     // Filter only text annotations
     const textAnnotations = annotations.filter(a => a.type === 'text');
@@ -228,19 +230,21 @@ export const TranscriptionSidebar: React.FC<TranscriptionSidebarProps> = ({
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: '#ffffff',
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+            backdropFilter: 'blur(12px)',
             borderRight: 'none',
             position: 'relative',
             fontFamily: '"IBM Plex Mono", monospace',
             borderRadius: '12px',
             border: '1px solid #e8e8e8',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+            boxShadow: 'none'
         }}>
             {/* Header */}
             <div style={{
                 padding: '1rem',
                 borderBottom: '2px solid black',
-                background: '#FAFAFA'
+                background: '#FAFAFA',
+                borderRadius: '12px 12px 0 0'
             }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <h2 style={{ fontSize: '1rem', fontWeight: 600, margin: 0, letterSpacing: '-0.5px' }}>
@@ -281,7 +285,7 @@ export const TranscriptionSidebar: React.FC<TranscriptionSidebarProps> = ({
                             style={{
                                 padding: '1rem',
                                 border: isActive ? '1px solid #999' : '1px solid #e8e8e8',
-                                background: isActive ? '#fafafa' : '#ffffff',
+                                background: isActive ? 'rgba(255, 255, 255, 0.6)' : 'rgba(255, 255, 255, 0.4)',
                                 transition: 'all 0.15s ease',
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -591,12 +595,29 @@ export const TranscriptionSidebar: React.FC<TranscriptionSidebarProps> = ({
             </div>
 
             {/* Footer */}
-            <div style={{ borderTop: '1px solid #eee', padding: '1rem', background: 'white' }}>
+            {/* Footer */}
+            <div style={{ borderTop: '1px solid #e8e8e8', padding: '1rem', background: 'transparent', borderRadius: '0 0 12px 12px', display: 'flex', gap: '1rem' }}>
+                {onBack && (
+                    <button
+                        onClick={onBack}
+                        className="tech-button"
+                        style={{
+                            flex: 1,
+                            backgroundColor: 'transparent',
+                            color: 'black',
+                            border: '1px solid black',
+                            justifyContent: 'center',
+                            padding: '0.8rem'
+                        }}
+                    >
+                        GO BACK
+                    </button>
+                )}
                 <button
                     onClick={onFinish}
                     className="tech-button primary"
                     style={{
-                        width: '100%',
+                        flex: 2,
                         backgroundColor: 'black',
                         color: 'white',
                         border: '1px solid black',

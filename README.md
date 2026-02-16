@@ -2,7 +2,7 @@
 
 A circuit annotation pipeline for building AI training datasets, built in TypeScript and Go. Provides a sleek web interface for labeling circuit components, nodes, and connections on hand-drawn or printed schematics.
 
-Current Version: **0.1.0**
+Current Version: **0.1.1**
 
 ## 📟 Features
 

@@ -162,10 +162,17 @@ export const TranscriptionView: React.FC<TranscriptionViewProps> = ({
     };
 
     return (
-        <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div style={{
+            width: '100%', height: '100%', display: 'flex', flexDirection: 'column', gap: '0',
+            background: 'rgba(255, 255, 255, 0.5)', backdropFilter: 'blur(12px)',
+            borderRadius: '12px', border: '1px solid #e8e8e8',
+            boxShadow: 'none',
+            overflow: 'hidden'
+        }}>
             {/* Header / Zoom Controls */}
-            <div className="tech-border" style={{
-                width: '100%', padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', zIndex: 10
+            <div style={{
+                width: '100%', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                background: 'transparent', zIndex: 10, borderBottom: '1px solid #e8e8e8', borderRadius: '12px 12px 0 0'
             }}>
                 <span style={{ fontWeight: 600, fontSize: '0.9rem', letterSpacing: '-0.5px' }}>TRANSCRIPTION VIEW</span>
                 <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
@@ -178,14 +185,14 @@ export const TranscriptionView: React.FC<TranscriptionViewProps> = ({
             {/* Viewport */}
             <div
                 ref={containerRef}
-                className="tech-border"
                 style={{
                     flex: 1,
                     width: '100%',
                     background: '#f0f0f0',
                     overflow: 'hidden',
                     position: 'relative',
-                    cursor: linkingTextId ? 'crosshair' : (isDrawing ? 'crosshair' : (isDragging ? 'grabbing' : 'grab'))
+                    cursor: linkingTextId ? 'crosshair' : (isDrawing ? 'crosshair' : (isDragging ? 'grabbing' : 'grab')),
+                    borderRadius: '0 0 12px 12px'
                 }}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}

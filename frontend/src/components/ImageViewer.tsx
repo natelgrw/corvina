@@ -193,7 +193,8 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
             {/* Card 1: Metadata */}
             <div style={{
                 width: '100%', padding: '0.75rem 1rem', display: 'flex', gap: '2rem', alignItems: 'center',
-                background: '#fff', zIndex: 50, borderRadius: '12px', border: '1px solid #e8e8e8'
+                background: 'rgba(255, 255, 255, 0.5)', backdropFilter: 'blur(12px)',
+                zIndex: 50, borderRadius: '12px', border: '1px solid #e8e8e8'
             }}>
                 <TechDropdown
                     label="DRAWING TYPE"
@@ -212,7 +213,8 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
             {/* Card 2: Viewer */}
             <div style={{
                 flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden',
-                background: '#fff', borderRadius: '12px', border: '1px solid #e8e8e8'
+                background: 'rgba(255, 255, 255, 0.5)', backdropFilter: 'blur(12px)',
+                borderRadius: '12px', border: '1px solid #e8e8e8'
             }}>
                 {/* Controls bar */}
                 <div style={{

@@ -292,6 +292,7 @@ function App() {
         <div className="mist-blob purple-1" />
         <div className="mist-blob orange-2" />
         <div className="mist-blob purple-2" />
+        <div className="mist-blob green-1" />
       </div>
 
       {isLoading && <LoadingScreen />}
@@ -335,9 +336,9 @@ function App() {
       <main style={{ flex: imgFile ? 1 : 'unset', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {!imgFile ? (
           <div style={{ maxWidth: '520px', margin: '6rem auto', textAlign: 'center' }}>
-            <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: '#333' }}>Circuit Annotation Pipeline</h2>
+            <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: '#333' }}>CRCUIT ANNOTATION PIPELINE</h2>
             <p style={{ lineHeight: '1.7', color: '#888', fontSize: '0.9rem', marginBottom: '2rem' }}>
-              Upload a circuit image (PNG) to begin annotating.
+              Upload an image to begin annotating.
             </p>
             <FileUpload onFileSelect={handleFileUpload} />
           </div>
@@ -347,10 +348,11 @@ function App() {
             gridTemplateColumns: phase === 'transcription' ? '1fr 1fr' : '350px 1fr',
             gap: '1rem',
             height: '100%',
-            overflow: 'hidden',
-            background: '#ffffff',
-            borderRadius: '12px',
-            padding: '1rem'
+            overflow: phase === 'transcription' ? 'visible' : 'hidden',
+            background: 'transparent',
+            borderRadius: phase === 'transcription' ? '0' : '12px',
+            padding: '1rem',
+            boxShadow: 'none'
           }}>
             {/* Left Sidebar */}
             <div style={{ height: '100%', overflow: 'hidden' }}>
@@ -384,6 +386,7 @@ function App() {
                   onToggleDrawing={() => setIsDrawingText(!isDrawingText)}
                   linkingTextId={linkingTextId}
                   setLinkingTextId={setLinkingTextId}
+                  onBack={() => setPhase('annotation')}
                 />
               )}
             </div>
@@ -429,7 +432,7 @@ function App() {
         )}
       </main>
 
-      <footer style={{ marginTop: !imgFile ? '4rem' : '1.25rem', paddingBottom: '1.25rem', textAlign: 'center', fontSize: '0.75rem', color: '#bbb', letterSpacing: '0.1em', fontWeight: 500 }}>
+      <footer style={{ marginTop: !imgFile ? '4rem' : '2rem', paddingBottom: '0.5rem', textAlign: 'center', fontSize: '0.75rem', color: '#bbb', letterSpacing: '0.1em', fontWeight: 500 }}>
         DATA IN. INTELLIGENCE OUT.
       </footer>
 
