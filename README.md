@@ -1,8 +1,8 @@
 # CORVINA
 
-A circuit annotation pipeline for building AI training datasets. Provides a sleek web interface for labeling circuit components, nodes, and connections on hand-drawn or printed schematics.
+A circuit annotation pipeline for building AI training datasets, built in TypeScript and Go. Provides a sleek web interface for labeling circuit components, nodes, and connections on hand-drawn or printed schematics.
 
-Current Version: **1.0.0**
+Current Version: **0.1.0**
 
 ## 📟 Features
 
@@ -31,8 +31,6 @@ The annotation workflow is split into two phases:
 - `values`: Structured data with value, unit prefix, and unit suffix (e.g., `10`, `k`, `Ω`)
 
 The final output is a dataset entry with the original `.png` image and a comprehensive `.json` file containing the circuit graph and all text annotations.
-
-![Subinterface Preview](./frontend/public/subinterface.png)
 
 ### Dataset Format
 

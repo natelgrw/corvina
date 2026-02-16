@@ -50,13 +50,15 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect }) => {
             className={`tech-border flex-center`}
             style={{
                 width: '100%',
-                minHeight: '300px',
-                borderStyle: 'dashed',
-                backgroundColor: isDragging ? '#fafafa' : 'transparent',
+                minHeight: '260px',
+                backgroundColor: isDragging ? 'rgba(168, 85, 247, 0.04)' : 'rgba(255, 255, 255, 0.6)',
                 cursor: 'pointer',
                 flexDirection: 'column',
-                gap: '1rem',
-                marginTop: '2rem'
+                gap: '0.75rem',
+                marginTop: '1.5rem',
+                backdropFilter: 'blur(8px)',
+                borderColor: isDragging ? 'var(--color-purple)' : undefined,
+                transition: 'all 0.3s ease'
             }}
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
@@ -71,9 +73,9 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect }) => {
                 style={{ display: 'none' }}
                 onChange={handleChange}
             />
-            <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>+</div>
-            <p style={{ letterSpacing: '1px' }}>
-                {isDragging ? 'DROP PNG HERE' : 'DRAG PNG OR CLICK TO UPLOAD'}
+            <div style={{ fontSize: '1.75rem', color: '#ccc', marginBottom: '0.5rem' }}>+</div>
+            <p style={{ letterSpacing: '0.06em', fontSize: '0.8rem', color: '#999', fontWeight: 500 }}>
+                {isDragging ? 'Drop PNG here' : 'Drag PNG or click to upload'}
             </p>
         </div>
     );

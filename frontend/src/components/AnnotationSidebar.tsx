@@ -91,9 +91,12 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: '#FAFAFA',
+            backgroundColor: '#ffffff',
             padding: '1rem',
-            fontFamily: '"IBM Plex Mono", monospace'
+            fontFamily: '"IBM Plex Mono", monospace',
+            borderRadius: '12px',
+            border: '1px solid #e8e8e8',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
         }}>
             {/* Header */}
             <div style={{
@@ -111,7 +114,7 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
             </div>
 
             {/* Tool Switcher (Tabs) */}
-            <div style={{ display: 'flex', marginBottom: '1rem', border: '1px solid #ccc', borderRadius: '4px', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', marginBottom: '1rem', border: '1px solid #e0e0e0', borderRadius: '8px', overflow: 'hidden' }}>
                 <button
                     onClick={() => setToolMode('box')}
                     style={{
@@ -123,7 +126,7 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
                         cursor: 'pointer',
                         fontWeight: 600,
                         fontSize: '0.65rem',
-                        borderRight: '1px solid #ccc'
+                        borderRadius: 0
                     }}
                 >
                     COMPONENTS
@@ -139,7 +142,7 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
                         cursor: 'pointer',
                         fontWeight: 600,
                         fontSize: '0.65rem',
-                        borderRight: '1px solid #ccc'
+                        borderRadius: 0
                     }}
                 >
                     NODES
@@ -154,7 +157,8 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
                         color: toolMode === 'connection' ? 'white' : 'black',
                         cursor: 'pointer',
                         fontWeight: 600,
-                        fontSize: '0.65rem'
+                        fontSize: '0.65rem',
+                        borderRadius: 0
                     }}
                 >
                     LINKS
@@ -192,10 +196,11 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
                             onMouseLeave={() => onHoverAnnotation(null)}
                             style={{
                                 padding: '0.75rem',
-                                border: hoveredId === ann.id ? '1px solid black' : '1px solid #eee',
-                                backgroundColor: hoveredId === ann.id ? 'white' : 'transparent',
-                                transition: 'all 0.2s ease',
-                                position: 'relative'
+                                border: hoveredId === ann.id ? '1px solid #999' : '1px solid #e8e8e8',
+                                backgroundColor: hoveredId === ann.id ? '#fafafa' : '#ffffff',
+                                transition: 'all 0.15s ease',
+                                position: 'relative',
+                                borderRadius: '6px'
                             }}
                         >
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.75rem', color: '#888' }}>
@@ -227,12 +232,13 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
                             {isSimple ? (
                                 <div style={{
                                     padding: '0.5rem',
-                                    background: '#eee',
+                                    background: '#f0f0f0',
                                     color: '#666',
                                     fontSize: '0.8rem',
                                     textAlign: 'center',
                                     fontStyle: 'italic',
-                                    fontWeight: 500
+                                    fontWeight: 500,
+                                    borderRadius: '4px'
                                 }}>
                                     {ann.type === 'node' ? `Node ${typeIndex}` : (ann.type === 'connection' ? connectionLabel : 'LEGACY LINE')}
                                 </div>
@@ -254,8 +260,8 @@ export const AnnotationSidebar: React.FC<AnnotationSidebarProps> = ({
                         textAlign: 'center',
                         color: '#999',
                         fontSize: '0.85rem',
-                        border: '1px dashed #ddd',
-                        borderRadius: '4px'
+                        border: '1px solid #e0e0e0',
+                        borderRadius: '6px'
                     }}>
                         NO {toolMode === 'box' ? 'COMPONENTS' : (toolMode === 'connection' ? 'LINKS' : 'NODES')}
                     </div>

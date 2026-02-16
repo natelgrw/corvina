@@ -284,20 +284,35 @@ function App() {
 
 
   return (
-    <div className="container" style={{ padding: '2rem', height: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <div style={{ padding: '2rem', height: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 1, maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
+
+      {/* Mist Background */}
+      <div className="mist-container">
+        <div className="mist-blob orange-1" />
+        <div className="mist-blob purple-1" />
+        <div className="mist-blob orange-2" />
+        <div className="mist-blob purple-2" />
+      </div>
 
       {isLoading && <LoadingScreen />}
 
       <header style={{
-        marginBottom: '1rem',
-        borderBottom: '1px solid #e0e0e0',
-        paddingBottom: '0.5rem',
+        marginBottom: '1.5rem',
+        borderBottom: '1px solid #eee',
+        paddingBottom: '0.75rem',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center'
       }}>
-        <h1 style={{ fontSize: '1.5rem', letterSpacing: '-0.5px' }}>
-          <span style={{ fontWeight: 600 }}>Circuit Annotator</span>
+        <h1 style={{ fontSize: '1.35rem', letterSpacing: '-0.5px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" width="20" height="20">
+            <line x1="16" y1="2" x2="16" y2="10" stroke="#111" strokeWidth="2" strokeLinecap="round" />
+            <line x1="22" y1="16" x2="30" y2="16" stroke="#111" strokeWidth="2" strokeLinecap="round" />
+            <line x1="16" y1="22" x2="16" y2="30" stroke="#111" strokeWidth="2" strokeLinecap="round" />
+            <line x1="2" y1="16" x2="10" y2="16" stroke="#111" strokeWidth="2" strokeLinecap="round" />
+            <circle cx="16" cy="16" r="2.5" fill="#111" />
+          </svg>
+          CORVINA
         </h1>
         {imgFile && (
           <button
@@ -312,17 +327,17 @@ function App() {
             }}
             className="close-btn"
           >
-            CLOSE FILE
+            Close File
           </button>
         )}
       </header>
 
       <main style={{ flex: imgFile ? 1 : 'unset', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {!imgFile ? (
-          <div style={{ maxWidth: '600px', margin: '4rem auto' }}>
-            <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>CIRCUIT ANNOTATION PIPELINE</h2>
-            <p style={{ lineHeight: '1.6', opacity: 0.8 }}>
-              Upload a Circuit Image (PNG) to begin.
+          <div style={{ maxWidth: '520px', margin: '6rem auto', textAlign: 'center' }}>
+            <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: '#333' }}>Circuit Annotation Pipeline</h2>
+            <p style={{ lineHeight: '1.7', color: '#888', fontSize: '0.9rem', marginBottom: '2rem' }}>
+              Upload a circuit image (PNG) to begin annotating.
             </p>
             <FileUpload onFileSelect={handleFileUpload} />
           </div>
@@ -330,9 +345,12 @@ function App() {
           <div style={{
             display: 'grid',
             gridTemplateColumns: phase === 'transcription' ? '1fr 1fr' : '350px 1fr',
-            gap: '2rem',
+            gap: '1rem',
             height: '100%',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            background: '#ffffff',
+            borderRadius: '12px',
+            padding: '1rem'
           }}>
             {/* Left Sidebar */}
             <div style={{ height: '100%', overflow: 'hidden' }}>
@@ -411,8 +429,8 @@ function App() {
         )}
       </main>
 
-      <footer style={{ marginTop: !imgFile ? '8rem' : '2rem', textAlign: 'center', fontSize: '0.85rem', opacity: 0.4 }}>
-        CIRCUIT DATASET BUILDER
+      <footer style={{ marginTop: !imgFile ? '4rem' : '1.25rem', paddingBottom: '1.25rem', textAlign: 'center', fontSize: '0.75rem', color: '#bbb', letterSpacing: '0.1em', fontWeight: 500 }}>
+        DATA IN. INTELLIGENCE OUT.
       </footer>
 
 

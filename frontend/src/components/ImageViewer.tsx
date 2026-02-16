@@ -189,10 +189,11 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
     };
 
     return (
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', height: '100%' }}>
-            {/* Top Bar: Metadata */}
-            <div className="tech-border" style={{
-                width: '100%', padding: '0.75rem 1rem', display: 'flex', gap: '2rem', alignItems: 'center', background: '#fff', zIndex: 50
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', height: '100%', gap: '0.75rem' }}>
+            {/* Card 1: Metadata */}
+            <div style={{
+                width: '100%', padding: '0.75rem 1rem', display: 'flex', gap: '2rem', alignItems: 'center',
+                background: '#fff', zIndex: 50, borderRadius: '12px', border: '1px solid #e8e8e8'
             }}>
                 <TechDropdown
                     label="DRAWING TYPE"
@@ -208,72 +209,77 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
                 />
             </div>
 
-            {/* Bottom Bar: Controls */}
-            <div className="tech-border" style={{
-                width: '100%', padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', zIndex: 10
+            {/* Card 2: Viewer */}
+            <div style={{
+                flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden',
+                background: '#fff', borderRadius: '12px', border: '1px solid #e8e8e8'
             }}>
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>{file.name}</span>
-                </div>
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                    <button onClick={() => handleZoomValues(-0.2)}>-</button>
-                    <span style={{ fontSize: '0.9rem', minWidth: '3rem', textAlign: 'center' }}>{(scale * 100).toFixed(0)}%</span>
-                    <button onClick={() => handleZoomValues(0.2)}>+</button>
-                </div>
-            </div>
-
-            {/* Viewport */}
-            <div
-                ref={containerRef}
-                className="tech-border"
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-                style={{
-                    padding: 0,
-                    background: '#666',
-                    overflow: 'hidden',
-                    width: '100%',
-                    flex: 1,
-                    position: 'relative',
-                    cursor: (isDrawing && toolMode === 'line') ? 'copy' : (isDrawing ? 'crosshair' : (isDragging ? 'grabbing' : 'grab')),
-                    userSelect: 'none'
-                }}
-            >
+                {/* Controls bar */}
                 <div style={{
-                    transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-                    transformOrigin: '0 0',
-                    width: 'fit-content',
-                    height: 'fit-content',
-                    position: 'relative',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    width: '100%', padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #eee'
                 }}>
-                    {imageSrc && (
-                        <img
-                            src={imageSrc}
-                            alt="Circuit"
-                            onLoad={handleImageLoad}
-                            style={{ display: 'block', pointerEvents: 'none' }}
-                            draggable={false}
-                        />
-                    )}
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>{file.name}</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                        <button onClick={() => handleZoomValues(-0.2)}>-</button>
+                        <span style={{ fontSize: '0.9rem', minWidth: '3rem', textAlign: 'center' }}>{(scale * 100).toFixed(0)}%</span>
+                        <button onClick={() => handleZoomValues(0.2)}>+</button>
+                    </div>
+                </div>
 
-                    {imgDimensions && (
-                        <AnnotationOverlay
-                            pageNumber={1} // Single page for images
-                            scale={1.0}
-                            coordinateScale={scale} // Pass dynamic zoom scale for input normalization
-                            annotations={annotations}
-                            isDrawing={isDrawing}
-                            toolMode={toolMode}
-                            onAddAnnotation={(rect) => onAddAnnotation({ ...rect, page: 1 })}
-                            onResizeAnnotation={onResizeAnnotation}
-                            onFinishDrawing={onFinishDrawing}
-                            hoveredId={hoveredId}
-                            onHoverAnnotation={onHoverAnnotation}
-                        />
-                    )}
+                {/* Viewport */}
+                <div
+                    ref={containerRef}
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                    style={{
+                        padding: 0,
+                        background: '#f0f0f0',
+                        overflow: 'hidden',
+                        width: '100%',
+                        flex: 1,
+                        position: 'relative',
+                        cursor: (isDrawing && toolMode === 'line') ? 'copy' : (isDrawing ? 'crosshair' : (isDragging ? 'grabbing' : 'grab')),
+                        userSelect: 'none'
+                    }}
+                >
+                    <div style={{
+                        transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+                        transformOrigin: '0 0',
+                        width: 'fit-content',
+                        height: 'fit-content',
+                        position: 'relative',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    }}>
+                        {imageSrc && (
+                            <img
+                                src={imageSrc}
+                                alt="Circuit"
+                                onLoad={handleImageLoad}
+                                style={{ display: 'block', pointerEvents: 'none' }}
+                                draggable={false}
+                            />
+                        )}
+
+                        {imgDimensions && (
+                            <AnnotationOverlay
+                                pageNumber={1} // Single page for images
+                                scale={1.0}
+                                coordinateScale={scale} // Pass dynamic zoom scale for input normalization
+                                annotations={annotations}
+                                isDrawing={isDrawing}
+                                toolMode={toolMode}
+                                onAddAnnotation={(rect) => onAddAnnotation({ ...rect, page: 1 })}
+                                onResizeAnnotation={onResizeAnnotation}
+                                onFinishDrawing={onFinishDrawing}
+                                hoveredId={hoveredId}
+                                onHoverAnnotation={onHoverAnnotation}
+                            />
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

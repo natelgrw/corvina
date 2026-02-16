@@ -228,10 +228,13 @@ export const TranscriptionSidebar: React.FC<TranscriptionSidebarProps> = ({
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: '#FAFAFA',
-            borderRight: '1px solid #e2e8f0',
+            backgroundColor: '#ffffff',
+            borderRight: 'none',
             position: 'relative',
-            fontFamily: '"IBM Plex Mono", monospace'
+            fontFamily: '"IBM Plex Mono", monospace',
+            borderRadius: '12px',
+            border: '1px solid #e8e8e8',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
         }}>
             {/* Header */}
             <div style={{
@@ -277,12 +280,13 @@ export const TranscriptionSidebar: React.FC<TranscriptionSidebarProps> = ({
                             onMouseLeave={() => onHoverId(null)}
                             style={{
                                 padding: '1rem',
-                                border: isActive ? '1px solid black' : '1px solid #ccc',
-                                background: isActive ? 'white' : 'transparent',
-                                transition: 'all 0.2s ease',
+                                border: isActive ? '1px solid #999' : '1px solid #e8e8e8',
+                                background: isActive ? '#fafafa' : '#ffffff',
+                                transition: 'all 0.15s ease',
                                 display: 'flex',
                                 flexDirection: 'column',
-                                gap: '1rem'
+                                gap: '1rem',
+                                borderRadius: '6px'
                             }}
                         >
                             {/* Header Line */}
